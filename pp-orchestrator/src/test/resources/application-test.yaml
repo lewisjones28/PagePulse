@@ -1,0 +1,4 @@
+confluence:
+  base-url: http://localhost:8090/confluence
+  username: testuser
+  api-token: testtoken

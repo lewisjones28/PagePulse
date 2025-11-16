@@ -16,9 +16,11 @@
     <description>Page Pulse</description>
     <modules>
         <module>pp-orchestrator</module>
+        <module>pp-confluence-feign</module>
     </modules>
     <properties>
         <java.version>25</java.version>
+        <spring-cloud-openfeign.version>4.3.0</spring-cloud-openfeign.version>
     </properties>
     <dependencies>
         <dependency>
@@ -28,6 +30,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Spring Cloud OpenFeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
