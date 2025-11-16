@@ -12,12 +12,22 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.page.pulse.confluence.client.page.params.constants.ConfluencePageResponseConstants.*;
+
 /**
  * Confluence-specific mapper. Focused on the Confluence JSON shape for pages.
+ *
+ * @author lewisjones
  */
 @Component
 public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
 {
+    /**
+     * Maps a JsonNode representing a Confluence page to a Document object.
+     *
+     * @param node the JsonNode to map
+     * @return the mapped Document object
+     */
     @Override
     protected Document mapNode( final JsonNode node )
     {
@@ -26,18 +36,19 @@ public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
             return null;
         }
 
-        final String externalId = JsonNodeUtils.getText( node, "id" );
-        final String externalOwnerId = JsonNodeUtils.getText( node, "ownerId" );
-        final String title = JsonNodeUtils.getText( node, "title" );
-        final String status = JsonNodeUtils.getText( node, "status" );
-        final String createdAt = JsonNodeUtils.getText( node, "createdAt" );
-        final JsonNode versionNode = node.path( "version" );
-        final String updatedAt = JsonNodeUtils.getText( versionNode, "createdAt" );
+        final String externalId = JsonNodeUtils.getText( node, PAGE_ID_ATTRIBUTE );
+        final String externalOwnerId = JsonNodeUtils.getText( node, PAGE_OWNER_ID_ATTRIBUTE );
+        final String title = JsonNodeUtils.getText( node, PAGE_TITLE_ATTRIBUTE );
+        final String status = JsonNodeUtils.getText( node, PAGE_STATUS_ATTRIBUTE );
+        final String createdAt = JsonNodeUtils.getText( node, PAGE_CREATED_AT_ATTRIBUTE );
+        final JsonNode versionNode = node.path( VERSION_ATTRIBUTE );
+        final String updatedAt = JsonNodeUtils.getText( versionNode, VERSION_CREATED_AT_ATTRIBUTE );
         final LocalDateTime createdAtDateTime = MappingUtils.parseDate( createdAt );
         final LocalDateTime updatedAtDateTime = MappingUtils.parseDate( updatedAt );
         final List<String> tags = new ArrayList<>();
-        final JsonNode labelsNode = node.path( "labels" );
-        if ( !labelsNode.isMissingNode() && !labelsNode.isNull() && !labelsNode.get( "results" ).isEmpty() )
+        final JsonNode labelsNode = node.path( PAGE_LABELS_ATTRIBUTE );
+        if ( !labelsNode.isMissingNode() && !labelsNode.isNull() &&
+            !labelsNode.get( LABELS_RESULTS_ATTRIBUTE ).isEmpty() )
         {
             for ( final JsonNode label : labelsNode )
             {
@@ -49,7 +60,7 @@ public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
                 final ArrayNode results = ( ArrayNode ) label;
                 for ( final JsonNode labelNode : results )
                 {
-                    final String name = JsonNodeUtils.getText( labelNode, "name" );
+                    final String name = JsonNodeUtils.getText( labelNode, LABEL_NAME_ATTRIBUTE );
                     if ( name != null )
                     {
                         tags.add( name );

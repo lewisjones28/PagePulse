@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public final class JsonNodeUtils
 {
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private JsonNodeUtils()
     {
     }

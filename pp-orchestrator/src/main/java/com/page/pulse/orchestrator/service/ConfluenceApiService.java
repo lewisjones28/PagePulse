@@ -2,7 +2,7 @@ package com.page.pulse.orchestrator.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.page.pulse.confluence.client.ConfluenceApiClient;
-import com.page.pulse.confluence.client.ConfluencePageParams;
+import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
 import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
 import com.page.pulse.orchestrator.pojo.Document;
 import org.slf4j.Logger;

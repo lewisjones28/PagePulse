@@ -8,9 +8,15 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Utility helpers used by mappers to safely convert common values from JsonNode.
+ *
+ * @author lewisjones
  */
 public final class MappingUtils
 {
+
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private MappingUtils()
     {
     }
