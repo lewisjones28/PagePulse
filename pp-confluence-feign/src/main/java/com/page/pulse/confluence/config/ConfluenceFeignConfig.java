@@ -1,5 +1,6 @@
 package com.page.pulse.confluence.config;
 
+import feign.Contract;
 import feign.RequestInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,11 @@ public class ConfluenceFeignConfig
     @Value( "${confluence.api-token}" )
     private String apiToken;
 
+    /**
+     * Interceptor to add Basic Auth headers to each request.
+     *
+     * @return the RequestInterceptor
+     */
     @Bean
     public RequestInterceptor confluenceAuthInterceptor()
     {
@@ -32,6 +38,18 @@ public class ConfluenceFeignConfig
             template.header( "Authorization", "Basic " + base64 );
             template.header( "Accept", "application/json" );
         };
+    }
+
+    /**
+     * Use Feign's native annotation contract so @RequestLine and @Param are honoured.
+     * Spring's default Contract expects Spring MVC annotations (e.g. @GetMapping).
+     *
+     * @return the Feign Contract
+     */
+    @Bean
+    public Contract feignContract()
+    {
+        return new Contract.Default();
     }
 
 }
