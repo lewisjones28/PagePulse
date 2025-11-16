@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
 import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.utils.JsonNodeUtils;
 import com.page.pulse.orchestrator.utils.MappingUtils;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +26,11 @@ public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
             return null;
         }
 
-        final String externalId = getText( node, "id" );
-        final String title = getText( node, "title" );
-        final String status = getText( node, "status" );
-        final LocalDateTime createdAt = MappingUtils.parseDate( node.path( "createdAt" ).asText( null ) );
+        final String externalId = JsonNodeUtils.getText( node, "id" );
+        final String title = JsonNodeUtils.getText( node, "title" );
+        final String status = JsonNodeUtils.getText( node, "status" );
+        final String createdAt = JsonNodeUtils.getText( node, "createdAt" );
+        final LocalDateTime createdAtDateTime = MappingUtils.parseDate( createdAt );
         final List<String> tags = new ArrayList<>();
         final JsonNode labelsNode = node.path( "labels" );
         if ( !labelsNode.isMissingNode() && !labelsNode.isNull() && !labelsNode.get( "results" ).isEmpty() )
@@ -43,7 +45,7 @@ public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
                 final ArrayNode results = ( ArrayNode ) label;
                 for ( final JsonNode labelNode : results )
                 {
-                    final String name = labelNode.path( "name" ).asText( null );
+                    final String name = JsonNodeUtils.getText( labelNode, "name" );
                     if ( name != null )
                     {
                         tags.add( name );
@@ -52,6 +54,6 @@ public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
             }
         }
 
-        return new Document( externalId, title, status, tags, createdAt );
+        return new Document( externalId, title, status, tags, createdAtDateTime );
     }
 }
