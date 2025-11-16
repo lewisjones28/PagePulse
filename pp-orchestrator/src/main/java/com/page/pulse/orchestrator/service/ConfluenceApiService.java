@@ -3,9 +3,14 @@ package com.page.pulse.orchestrator.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.page.pulse.confluence.client.ConfluenceApiClient;
 import com.page.pulse.confluence.client.ConfluencePageParams;
+import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
+import com.page.pulse.orchestrator.pojo.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Service that wraps the Feign client for Confluence API calls.
@@ -18,15 +23,18 @@ public class ConfluenceApiService
 
     private static final Logger log = LoggerFactory.getLogger( ConfluenceApiService.class );
     private final ConfluenceApiClient confluenceApiClient;
+    private final BaseDocumentMapper<Document> documentMapper;
 
     /**
      * Constructor for ConfluenceApiService.
      *
      * @param confluenceApiClient the Feign client for Confluence API
+     * @param documentMapper the MapStruct mapper to convert JsonNode to PageDto
      */
-    public ConfluenceApiService( final ConfluenceApiClient confluenceApiClient )
+    public ConfluenceApiService( final ConfluenceApiClient confluenceApiClient, final BaseDocumentMapper<Document> documentMapper )
     {
         this.confluenceApiClient = confluenceApiClient;
+        this.documentMapper = documentMapper;
     }
 
     /**
@@ -61,8 +69,9 @@ public class ConfluenceApiService
      * Collect pages by fetching the pages list then retrieving each page's details.
      *
      * @param params optional query params to influence the listing request
+     * @return list of Document records (may be empty)
      */
-    public void collectPages( final ConfluencePageParams params )
+    public List<Document> collectPages( final ConfluencePageParams params )
     {
         // Normalize params so callers can pass null safely; then ensure 'current' status.
         final ConfluencePageParams finalParams = ( params == null ) ? ConfluencePageParams.empty() : params;
@@ -73,54 +82,19 @@ public class ConfluenceApiService
             if ( pages == null || pages.isNull() )
             {
                 log.warn( "No pages returned from Confluence API" );
-                return;
+                return Collections.emptyList();
             }
 
-            // pages may be an object containing arrays or an array of pages; iterate defensively
-            final var outer = pages.elements();
-            while ( outer.hasNext() )
-            {
-                final JsonNode pageList = outer.next();
-                if ( pageList == null || pageList.isNull() )
-                {
-                    continue;
-                }
+            final List<JsonNode> pageWithDetails = pages.findValues( "id" ).stream()
+                .map( idNode -> getPage( idNode.asText() ) )
+                .toList();
 
-                if ( pageList.isArray() )
-                {
-                    log.debug( "Found {} pages", pageList.size() );
-                    for ( final JsonNode page : pageList )
-                    {
-                        if ( page == null || page.isNull() )
-                        {
-                            log.warn( "Encountered null page in list" );
-                            continue;
-                        }
-
-                        final JsonNode idNode = page.get( "id" );
-                        if ( idNode == null || idNode.isNull() )
-                        {
-                            log.warn( "Page missing 'id' field: {}", page );
-                            continue;
-                        }
-
-                        final String pageId = idNode.asText();
-                        try
-                        {
-                            final JsonNode pageWithTags = getPage( pageId );
-                            log.debug( "Retrieved page {}: {}", pageId, pageWithTags );
-                        }
-                        catch ( final Exception e )
-                        {
-                            log.warn( "Failed to fetch page {}", pageId, e );
-                        }
-                    }
-                }
-            }
+            return documentMapper.toDocumentList( pageWithDetails );
         }
         catch ( final Exception e )
         {
             log.warn( "Call failed while collecting pages", e );
+            return Collections.emptyList();
         }
     }
 
