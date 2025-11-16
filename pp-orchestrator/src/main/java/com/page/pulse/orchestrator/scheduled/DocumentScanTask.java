@@ -41,7 +41,7 @@ public class DocumentScanTask
     /**
      * Runs a job to scan all documents, evaluating them against defined rules
      */
-    @Scheduled( cron = "*/30 * * * * *" )
+    @Scheduled( cron = "${document.cron-expression}" )
     public void documentScanTask()
     {
         log.info( "Starting documentScanTask" );

@@ -6,3 +6,9 @@ confluence:
   base-url: ${CONFLUENCE_BASE_URL}
   username: ${CONFLUENCE_USERNAME}
   api-token: ${CONFLUENCE_API_TOKEN}
+
+document:
+  rules:
+    stale-document:
+      daysThreshold: 10
+  cron-expression: "0 0/1 * * * *"
