@@ -12,6 +12,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.List;
+
 /**
  * Main application entry point.
  *
@@ -48,7 +50,8 @@ public class PagePulseServiceApplication
         return args ->
         {
             log.info( "Confluence invocation test started" );
-            confluenceApiService.collectPages( new ConfluencePageParams() );
+            final ConfluencePageParams params = ConfluencePageParams.empty().status( List.of( "current" ) );
+            confluenceApiService.collectPages( params );
         };
     }
 

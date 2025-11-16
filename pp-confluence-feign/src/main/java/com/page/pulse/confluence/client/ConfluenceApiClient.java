@@ -20,12 +20,21 @@ public interface ConfluenceApiClient
 {
 
     /**
-     * Retrieves pages from the Confluence API without query parameters.
+     * Retrieves pages from the Confluence API without any query parameters.
      *
      * @return JsonNode representing the pages.
      */
     @RequestLine( "GET /pages" )
     JsonNode getPages();
+
+    /**
+     * Retrieves pages from the Confluence API with query parameters.
+     *
+     * @param queryMap the query parameters to include in the request.
+     * @return JsonNode representing the pages.
+     */
+    @RequestLine( "GET /pages" )
+    JsonNode getPages( @QueryMap Map<String, Object> queryMap );
 
     /**
      * Retrieves a specific page from the Confluence API by its ID.

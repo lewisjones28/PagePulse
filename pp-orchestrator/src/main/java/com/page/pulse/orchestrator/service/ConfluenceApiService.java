@@ -30,16 +30,6 @@ public class ConfluenceApiService
     }
 
     /**
-     * Retrieve pages from Confluence via the Feign client.
-     *
-     * @return JsonNode response from the Confluence API (may be null)
-     */
-    private JsonNode getPages()
-    {
-        return getPages( new ConfluencePageParams() );
-    }
-
-    /**
      * Retrieve pages using a parameter object which is converted to a query map.
      *
      * @param params optional query params to influence the listing request
@@ -49,18 +39,22 @@ public class ConfluenceApiService
     {
         try
         {
-            if ( params == null || params.isEmpty() )
+            final ConfluencePageParams finalParams = ( params == null ) ? ConfluencePageParams.empty() : params;
+            if ( finalParams.isEmpty() )
             {
                 return confluenceApiClient.getPages();
             }
+            else
+            {
+                return confluenceApiClient.getPages( finalParams.toMap() );
+            }
+
         }
         catch ( final Exception e )
         {
             log.error( "Error fetching pages from Confluence API", e );
             throw e;
         }
-
-        return null;
     }
 
     /**
@@ -70,10 +64,12 @@ public class ConfluenceApiService
      */
     public void collectPages( final ConfluencePageParams params )
     {
-        log.info( "Collecting Confluence pages with params: {}", params );
+        // Normalize params so callers can pass null safely; then ensure 'current' status.
+        final ConfluencePageParams finalParams = ( params == null ) ? ConfluencePageParams.empty() : params;
+        log.debug( "Collecting Confluence pages with params: {}", finalParams );
         try
         {
-            final JsonNode pages = getPages( params );
+            final JsonNode pages = getPages( finalParams );
             if ( pages == null || pages.isNull() )
             {
                 log.warn( "No pages returned from Confluence API" );
@@ -92,6 +88,7 @@ public class ConfluenceApiService
 
                 if ( pageList.isArray() )
                 {
+                    log.debug( "Found {} pages", pageList.size() );
                     for ( final JsonNode page : pageList )
                     {
                         if ( page == null || page.isNull() )
@@ -137,7 +134,7 @@ public class ConfluenceApiService
     {
         try
         {
-            final ConfluencePageParams params = new ConfluencePageParams().includeLabels( Boolean.TRUE );
+            final ConfluencePageParams params = ConfluencePageParams.empty().includeLabels( Boolean.TRUE );
             return confluenceApiClient.getPage( pageId, params.toMap() );
         }
         catch ( final Exception e )
