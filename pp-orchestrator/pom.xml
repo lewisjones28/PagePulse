@@ -12,18 +12,18 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.6.3</version>
+            <version>${org.mapstruct.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-openfeign-core</artifactId>
-            <version>4.3.0</version>
+            <version>${spring-cloud-openfeign.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.page.pulse</groupId>
             <artifactId>pp-confluence-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${parent.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -52,7 +52,7 @@
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version>1.5.5.Final</version>
+                            <version>${org.mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

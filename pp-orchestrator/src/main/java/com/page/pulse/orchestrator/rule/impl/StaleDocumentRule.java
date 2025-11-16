@@ -3,6 +3,7 @@ package com.page.pulse.orchestrator.rule.impl;
 import com.page.pulse.orchestrator.pojo.Document;
 import com.page.pulse.orchestrator.pojo.rule.RuleResult;
 import com.page.pulse.orchestrator.rule.DocumentRule;
+import com.page.pulse.orchestrator.rule.impl.properties.StaleDocumentRuleProperties;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -17,6 +18,18 @@ import java.time.LocalDateTime;
 @Component
 public class StaleDocumentRule implements DocumentRule
 {
+
+    private final StaleDocumentRuleProperties props;
+
+    /**
+     * Constructs a StaleDocumentRule with the provided properties.
+     *
+     * @param props the properties for the stale document rule
+     */
+    public StaleDocumentRule( final StaleDocumentRuleProperties props )
+    {
+        this.props = props;
+    }
 
     /**
      * Gets the name of the rule.
@@ -41,7 +54,7 @@ public class StaleDocumentRule implements DocumentRule
     {
         final Duration age = Duration.between( document.updatedAt(), LocalDateTime.now() );
         final long interval = age.toDays();
-        if ( interval > 1 )
+        if ( interval > props.getDaysThreshold() )
         {
             return RuleResult.fail( "Document last updated " + interval + " days ago", document.externalId() );
         }

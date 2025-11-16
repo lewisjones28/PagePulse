@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+
+import static com.page.pulse.confluence.client.page.params.constants.ConfluencePageParamConstants.CURRENT_STATUS_PARAM;
+
 /**
  * Scheduled task that scans documents in Confluence and evaluates them against defined rules.
  *
@@ -37,12 +41,15 @@ public class DocumentScanTask
     /**
      * Runs a job to scan all documents, evaluating them against defined rules
      */
-    @Scheduled( cron = "*/30 * * * * *" )
+    @Scheduled( cron = "${document.cron-expression}" )
     public void documentScanTask()
     {
         log.info( "Starting documentScanTask" );
 
-        apiService.collectPages( ConfluencePageParams.empty() )
+        final ConfluencePageParams params = ConfluencePageParams.empty()
+            .status( Collections.singletonList( CURRENT_STATUS_PARAM ) );
+
+        apiService.collectPages( params )
             .stream()
             .flatMap( doc -> ruleEngine.evaluate( doc ).stream() )
             .forEach( this::raiseAlert );
@@ -64,7 +71,7 @@ public class DocumentScanTask
         }
         else
         {
-            log.debug( "✅ [{}] Document {} PASSED", evaluation.ruleName(), evaluation.result().documentId() );
+            log.info( "✅ [{}] Document {} PASSED", evaluation.ruleName(), evaluation.result().documentId() );
         }
     }
 
