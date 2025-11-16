@@ -8,6 +8,7 @@ import java.util.List;
  *
  * @author lewisjones
  */
-public record Document( String externalId, String title, String status, List<String> tags, LocalDateTime createdAt )
+public record Document( String externalId, String externalOwnerId, String title, String status, List<String> tags,
+                       LocalDateTime createdAt, LocalDateTime updatedAt )
 {
 }
