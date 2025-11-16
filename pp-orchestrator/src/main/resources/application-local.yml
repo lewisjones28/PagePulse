@@ -1,0 +1,4 @@
+# Enable debug-level logging for Feign to see request/response details
+logging:
+  level:
+    feign: DEBUG
