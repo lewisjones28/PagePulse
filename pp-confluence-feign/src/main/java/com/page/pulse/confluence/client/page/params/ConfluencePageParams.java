@@ -1,4 +1,6 @@
-package com.page.pulse.confluence.client;
+package com.page.pulse.confluence.client.page.params;
+
+import com.page.pulse.confluence.client.page.params.constants.ConfluencePageParamConstants;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -18,6 +20,9 @@ public class ConfluencePageParams
     private Boolean includeLabels;
     private List<String> status;
 
+    /**
+     * Default constructor is private to enforce use of factory method.
+     */
     public ConfluencePageParams()
     {
     }
@@ -74,13 +79,13 @@ public class ConfluencePageParams
         final Map<String, Object> map = new LinkedHashMap<>();
         if ( includeLabels != null )
         {
-            map.put( "include-labels", includeLabels );
+            map.put( ConfluencePageParamConstants.INCLUDE_LABELS_PARAM, includeLabels );
         }
         if ( status != null && !status.isEmpty() )
         {
             // Confluence accepts multiple status values; send as comma-separated list
             final String joined = status.stream().map( String::trim ).collect( Collectors.joining( "," ) );
-            map.put( "status", joined );
+            map.put( ConfluencePageParamConstants.STATUS_PARAM, joined );
         }
         return map;
     }

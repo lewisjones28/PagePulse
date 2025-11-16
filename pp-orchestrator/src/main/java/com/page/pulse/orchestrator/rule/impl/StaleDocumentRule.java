@@ -40,10 +40,10 @@ public class StaleDocumentRule implements DocumentRule
     public RuleResult evaluate( final Document document )
     {
         final Duration age = Duration.between( document.updatedAt(), LocalDateTime.now() );
-        final long minutes = age.toMinutes();
-        if ( minutes > 1 )
+        final long interval = age.toDays();
+        if ( interval > 1 )
         {
-            return RuleResult.fail( "Document last updated " + minutes + " minutes ago", document.externalId() );
+            return RuleResult.fail( "Document last updated " + interval + " days ago", document.externalId() );
         }
 
         return RuleResult.pass( document.externalId() );
