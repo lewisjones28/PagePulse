@@ -14,10 +14,18 @@ import java.util.List;
 
 /**
  * Confluence-specific mapper. Focused on the Confluence JSON shape for pages.
+ *
+ * @author lewisjones
  */
 @Component
 public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
 {
+    /**
+     * Maps a JsonNode representing a Confluence page to a Document object.
+     *
+     * @param node the JsonNode to map
+     * @return the mapped Document object
+     */
     @Override
     protected Document mapNode( final JsonNode node )
     {
