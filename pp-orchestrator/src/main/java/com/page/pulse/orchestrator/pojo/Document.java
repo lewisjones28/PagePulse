@@ -1,5 +1,6 @@
 package com.page.pulse.orchestrator.pojo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -7,6 +8,6 @@ import java.util.List;
  *
  * @author lewisjones
  */
-public record Document( String id, String title, String status, List<String> tags )
+public record Document( String externalId, String title, String status, List<String> tags, LocalDateTime createdAt )
 {
 }

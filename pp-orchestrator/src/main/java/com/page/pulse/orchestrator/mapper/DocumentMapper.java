@@ -1,9 +1,11 @@
 package com.page.pulse.orchestrator.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.page.pulse.orchestrator.pojo.Document;
 import org.mapstruct.Mapper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,20 +58,32 @@ public interface DocumentMapper
             return null;
         }
 
-        final String id = node.path( "id" ).asText( null );
+        final String externalId = node.path( "id" ).asText( null );
         final String title = node.path( "title" ).asText( null );
         final String status = node.path( "status" ).asText( null );
+        final String createdAt = node.path( "createdAt" ).asText( null );
+        final LocalDateTime createdAtDateTime = MappingUtils.parseDate( createdAt );
         final List<String> tags = new ArrayList<>();
         final JsonNode labelsNode = node.path( "labels" );
         if ( !labelsNode.isMissingNode() && !labelsNode.isNull() && !labelsNode.get( "results" ).isEmpty() )
         {
             for ( final JsonNode label : labelsNode )
             {
-                tags.add( label.asText( null ) );
+                if ( !label.isArray() )
+                {
+                    continue;
+                }
+
+                final ArrayNode resultsNode = ( ArrayNode ) label;
+                for ( final JsonNode labelNode : resultsNode )
+                {
+                    final String labelText = labelNode.path( "name" ).asText( null );
+                    tags.add( labelText );
+                }
             }
         }
 
-        return new Document( id, title, status, tags );
+        return new Document( externalId, title, status, tags, createdAtDateTime );
     }
 
 }

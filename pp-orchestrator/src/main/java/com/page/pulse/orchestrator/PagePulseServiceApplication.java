@@ -1,6 +1,7 @@
 package com.page.pulse.orchestrator;
 
 import com.page.pulse.confluence.client.ConfluencePageParams;
+import com.page.pulse.orchestrator.pojo.Document;
 import com.page.pulse.orchestrator.service.ConfluenceApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,8 @@ public class PagePulseServiceApplication
         {
             log.info( "Confluence invocation test started" );
             final ConfluencePageParams params = ConfluencePageParams.empty().status( List.of( "current" ) );
-            confluenceApiService.collectPages( params );
+            final List<Document> documents = confluenceApiService.collectPages( params );
+            log.info( "Confluence invocation test completed - retrieved {} documents", documents.size() );
         };
     }
 
