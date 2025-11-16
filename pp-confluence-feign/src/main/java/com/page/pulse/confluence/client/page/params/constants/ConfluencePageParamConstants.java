@@ -25,4 +25,19 @@ public class ConfluencePageParamConstants
      */
     public static String STATUS_PARAM = "status";
 
+    /**
+     * Status name for current (i.e., live) documents.
+     */
+    public static String CURRENT_STATUS_PARAM = "current";
+
+    /**
+     * Status name for archived documents.
+     */
+    public static String ARCHIVED_STATUS_PARAM = "archived";
+
+    /**
+     * Status name for draft documents.
+     */
+    public static String DRAFT_STATUS_PARAM = "draft";
+
 }
