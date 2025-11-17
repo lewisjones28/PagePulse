@@ -23,6 +23,8 @@ The orchestrator module provides:
 
 ## 📦 Architecture & Components
 
+![Orchestrator Architecture](./docs/flows/images/page-pulse-orchestrator-flow.png)
+
 The module follows a layered architecture:
 
 ```
