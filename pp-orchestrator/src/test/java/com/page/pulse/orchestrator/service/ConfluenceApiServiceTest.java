@@ -67,7 +67,6 @@ class ConfluenceApiServiceTest
     void testCollectPagesWithNullParamsReturnsEmptyListWhenNoPages()
     {
         // given
-        // params is null
         final JsonNode mockPagesResponse = mock( JsonNode.class );
 
         // when
