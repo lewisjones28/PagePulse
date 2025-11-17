@@ -1,8 +1,10 @@
 package com.page.pulse.orchestrator.scheduled;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
+import com.page.pulse.orchestrator.pojo.rule.RuleResult;
+import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
+import com.page.pulse.orchestrator.service.ConfluenceApiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,17 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.time.LocalDateTime;
+import java.util.List;
 
-import com.page.pulse.orchestrator.pojo.Document;
-import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
-import com.page.pulse.orchestrator.pojo.rule.RuleResult;
-import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
-import com.page.pulse.orchestrator.service.ConfluenceApiService;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link DocumentScanTask}.
@@ -50,12 +46,12 @@ class DocumentScanTaskTest
     void testDocumentScanTaskWhenRulePasses()
     {
         // given
-        RuleResult passResult = RuleResult.pass( "doc1" );
-        RuleEvaluation evaluation = new RuleEvaluation( "RuleA", passResult );
-        when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocument ) );
-        when( ruleEngine.evaluate( sampleDocument ) ).thenReturn( List.of( evaluation ) );
+        final RuleResult passResult = RuleResult.pass( "doc1" );
+        final RuleEvaluation evaluation = new RuleEvaluation( "RuleA", passResult );
 
         // when
+        when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocument ) );
+        when( ruleEngine.evaluate( sampleDocument ) ).thenReturn( List.of( evaluation ) );
         documentScanTask.documentScanTask();
 
         // then
@@ -67,12 +63,13 @@ class DocumentScanTaskTest
     void testDocumentScanTaskWhenRuleFails()
     {
         // given
-        RuleResult failResult = RuleResult.fail( "Some error", "doc1" );
-        RuleEvaluation evaluation = new RuleEvaluation( "RuleA", failResult );
+        final RuleResult failResult = RuleResult.fail( "Some error", "doc1" );
+        final RuleEvaluation evaluation = new RuleEvaluation( "RuleA", failResult );
+
+        // when
         when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocument ) );
         when( ruleEngine.evaluate( sampleDocument ) ).thenReturn( List.of( evaluation ) );
 
-        // when
         documentScanTask.documentScanTask();
 
         // then
@@ -83,10 +80,9 @@ class DocumentScanTaskTest
     @Test
     void testDocumentScanTaskWhenNoDocuments()
     {
-        // given
+        // given, when
         when( apiService.collectPages( any() ) ).thenReturn( List.of() );
 
-        // when
         documentScanTask.documentScanTask();
 
         // then
