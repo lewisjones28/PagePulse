@@ -21,7 +21,6 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-          jdk: 25
 
       - name: Build and Test
         run: mvn clean test jacoco:report
