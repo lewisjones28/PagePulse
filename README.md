@@ -5,6 +5,8 @@ A configurable, automated auditing service designed to keep Confluence spaces he
 
 ## 🏗️ Architecture
 
+![System Architecture](docs/flows/images/page-pulse-flow.png)
+
 PagePulse is built as a multi-module Spring Boot application with a microservices architecture:
 
 - **pp-orchestrator**: Core business logic module that coordinates auditing workflows and processes

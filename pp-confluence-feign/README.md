@@ -8,6 +8,8 @@ This module serves as the external API integration layer for PagePulse, handling
 
 ## 🏗️ Architecture
 
+![Confluence Feign Architecture](./docs/flows/images/page-pulse-confluence-feign-flow.png)
+
 The module follows a clean architecture pattern with clear separation of concerns:
 
 - **Client Interface**: Declarative Feign client definitions
