@@ -26,6 +26,7 @@ PagePulse is built as a multi-module Spring Boot application with a microservice
 ### Prerequisites
 
 - Java 25
+- Spring Boot 3.3+
 - Maven 3.6+
 - Access to a Confluence instance with API permissions
 
@@ -62,8 +63,6 @@ mvn clean install
 cd pp-orchestrator
 mvn spring-boot:run
 ```
-
-The application will start on **http://localhost:8080** by default.
 
 ---
 
@@ -139,3 +138,13 @@ PagePulse includes Spring Boot Actuator for real-time monitoring:
 - **Health checks:** `/actuator/health`
 - **Metrics:** `/actuator/metrics`
 - **Application info:** `/actuator/info`
+
+## To Do
+- [ ] `Document` changes
+  - [ ] Internal `lastUpdated` field
+  - [ ] Cache in Redis
+- [ ] Cache Confluence API responses into Redis
+- [ ] Implement notification system (e.g., email, Slack) for Rule violations
+- [ ] New Rule Ideas
+  - [ ] Missing Label Rule - Identify pages lacking specific labels (https://diataxis.fr/)
+  - [ ] Deactivated Owner Rule - Flag pages owned by deactivated users
