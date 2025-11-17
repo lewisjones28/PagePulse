@@ -45,41 +45,41 @@ class BaseDocumentMapperTest
     @Test
     void testToDocumentListWhenResultsArrayPresent() throws Exception
     {
-        String json = """
+        final String json = """
             {
               "results": ["a", "b", "c"]
             }
             """;
-        JsonNode node = objectMapper.readTree( json );
-        List<String> result = mapper.toDocumentList( node );
+        final JsonNode node = objectMapper.readTree( json );
+        final List<String> result = mapper.toDocumentList( node );
         assertThat( result ).containsExactly( "a", "b", "c" );
     }
 
     @Test
     void testToDocumentListWhenResultsMissingUsesRoot() throws Exception
     {
-        String json = "[\"a\", \"b\"]";
-        JsonNode node = objectMapper.readTree( json );
-        List<String> result = mapper.toDocumentList( node );
+        final String json = "[\"a\", \"b\"]";
+        final JsonNode node = objectMapper.readTree( json );
+        final List<String> result = mapper.toDocumentList( node );
         assertThat( result ).containsExactly( "a", "b" );
     }
 
     @Test
     void testToDocumentListWhenResultsEmpty() throws Exception
     {
-        String json = "{\"results\": []}";
-        JsonNode node = objectMapper.readTree( json );
-        List<String> result = mapper.toDocumentList( node );
+        final String json = "{\"results\": []}";
+        final JsonNode node = objectMapper.readTree( json );
+        final List<String> result = mapper.toDocumentList( node );
         assertThat( result ).isEmpty();
     }
 
     @Test
     void testToDocumentListWithListInput() throws Exception
     {
-        String json = "[\"x\", \"y\"]";
-        JsonNode node = objectMapper.readTree( json );
-        List<JsonNode> nodeList = List.of( node.get( 0 ), node.get( 1 ) );
-        List<String> result = mapper.toDocumentList( nodeList );
+        final String json = "[\"x\", \"y\"]";
+        final JsonNode node = objectMapper.readTree( json );
+        final List<JsonNode> nodeList = List.of( node.get( 0 ), node.get( 1 ) );
+        final List<String> result = mapper.toDocumentList( nodeList );
         assertThat( result ).containsExactly( "x", "y" );
     }
 

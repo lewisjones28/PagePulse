@@ -26,7 +26,7 @@ class StaleDocumentRuleTest
     void setUp()
     {
         props = new StaleDocumentRuleProperties();
-        props.setDaysThreshold( 30 );
+        props.setDaysThreshold( Integer.parseInt( "30" ) );
         rule = new StaleDocumentRule( props );
     }
 
@@ -36,7 +36,7 @@ class StaleDocumentRuleTest
         // given
         final Document doc =
             new Document( "doc1", "owner1", "Title", "current", List.of( "tag1" ), LocalDateTime.now().minusDays( 40 ),
-                LocalDateTime.now().minusDays( 10 ) );
+                LocalDateTime.now().minusDays( Long.parseLong( "10" ) ) );
 
         // when
         final RuleResult result = rule.evaluate( doc );
@@ -51,9 +51,9 @@ class StaleDocumentRuleTest
     void testEvaluateWhenDocumentIsStale()
     {
         // given
-        final Document doc =
-            new Document( "doc2", "owner2", "Title", "current", List.of( "tag2" ), LocalDateTime.now().minusDays( 100 ),
-                LocalDateTime.now().minusDays( 50 ) );
+        final Document doc = new Document( "doc2", "owner2", "Title", "current", List.of( "tag2" ),
+            LocalDateTime.now().minusDays( Long.parseLong( "100" ) ),
+            LocalDateTime.now().minusDays( Long.parseLong( "50" ) ) );
 
         // when
         final RuleResult result = rule.evaluate( doc );
@@ -68,9 +68,9 @@ class StaleDocumentRuleTest
     void testEvaluateWhenDocumentIsExactlyThreshold()
     {
         // given
-        final Document doc =
-            new Document( "doc3", "owner3", "Title", "current", List.of( "tag3" ), LocalDateTime.now().minusDays( 31 ),
-                LocalDateTime.now().minusDays( 30 ) );
+        final Document doc = new Document( "doc3", "owner3", "Title", "current", List.of( "tag3" ),
+            LocalDateTime.now().minusDays( Long.parseLong( "31" ) ),
+            LocalDateTime.now().minusDays( Long.parseLong( "30" ) ) );
 
         // when
         final RuleResult result = rule.evaluate( doc );

@@ -39,7 +39,7 @@ public abstract class BaseDocumentMapper<T>
         final List<JsonNode> pages = new ArrayList<>();
         for ( final JsonNode item : items )
         {
-            if ( !item.isEmpty() )
+            if ( !item.isEmpty() || item.isTextual() )
             {
                 pages.add( item );
             }
