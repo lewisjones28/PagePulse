@@ -1,6 +1,7 @@
 package com.page.pulse.orchestrator.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.util.StringUtils;
 
 /**
  * Utility helpers for JsonNode.
@@ -25,11 +26,19 @@ public final class JsonNodeUtils
      */
     public static String getText( final JsonNode node, final String field )
     {
-        if ( node == null || node.isNull() )
+        if ( node == null )
         {
             return null;
         }
-        return node.path( field ).asText( null );
+
+        final JsonNode textNode = node.path( field );
+        if ( textNode.isNull() || !StringUtils.hasText( textNode.asText() ) )
+        {
+            return null;
+        }
+
+        return textNode.asText( null );
     }
+
 }
 
