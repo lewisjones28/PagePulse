@@ -40,14 +40,6 @@ Handles fetching and transforming Confluence content.
 - **Responsibilities:** Retrieve pages, filter by space, map raw API JSON to internal `Document` objects.  
 - **Extending:** Add new API methods for additional Confluence endpoints (e.g., spaces, attachments) or integrate with other external systems.
 
-```java
-@Service
-public class ConfluenceApiService {
-    public List<Document> getAllDocuments() { }
-    public Document getDocumentById(String pageId) { }
-}
-````
-
 ---
 
 ### Rule Engine
@@ -171,16 +163,31 @@ Or via IDE:
 
 ### Docker
 
-```bash
-docker build -t pagepulse-orchestrator .
-docker run -p 8080:8080 \
-  -e CONFLUENCE_BASE_URL=... \
-  -e CONFLUENCE_USERNAME=... \
-  -e CONFLUENCE_API_TOKEN=... \
-  pagepulse-orchestrator
-```
+## Running the Application
 
-> **Extending:** For containerized deployments, add new environment variables or volume mounts to support integrations.
+To run the `pp-orchestrator` service locally using Docker, follow these steps:
+
+1. Build the Docker image:
+   ```bash
+   docker-compose build
+   ```
+
+2. Run the service:
+   ```bash
+   docker-compose up
+   ```
+
+3. Access the application at `http://localhost:8080`.
+
+### Environment Variables
+
+The following environment variables need to be set in the `docker-compose.yml` file:
+
+- `CONFLUENCE_API_TOKEN`: Your Confluence API token.
+- `CONFLUENCE_BASE_URL`: The base URL of your Confluence instance.
+- `CONFLUENCE_USERNAME`: Your Confluence username.
+
+Replace the placeholders in the `docker-compose.yml` file with your actual values before running the application.
 
 ---
 
@@ -239,10 +246,8 @@ docker run -p 8080:8080 \
 
 ## 🔗 Related Documentation
 
-* [PagePulse Main README](../../README.md)
+* [PagePulse Main README](../README.md)
 * [Confluence Feign Client Docs](../pp-confluence-feign/README.md)
 * [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 * [MapStruct Documentation](https://mapstruct.org/documentation/stable/reference/html/)
 * [Confluence REST API v2](https://developer.atlassian.com/cloud/confluence/rest/v2/intro/)
-
-```
