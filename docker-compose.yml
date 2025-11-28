@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  pp-orchestrator:
+    build:
+      context: ./pp-orchestrator
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./pp-orchestrator/target:/app/target
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - CONFLUENCE_API_TOKEN=<your-confluence-api-token>
+      - CONFLUENCE_BASE_URL=<your-confluence-base-url>
+      - CONFLUENCE_USERNAME=<your-confluence-username>

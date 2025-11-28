@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.page.pulse.orchestrator.pojo.Document;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link ConfluenceDocumentMapper}.
@@ -132,5 +135,65 @@ class ConfluenceDocumentMapperTest
 
         // then
         assertThat( docEmptyResults.tags() ).isEmpty();
+    }
+
+    @Test
+    void testMapNodeWhenTitleIsNull()
+    {
+        // given
+        final JsonNode jsonNode = objectMapper.createObjectNode().put( "id", "12345" )
+            .put( "title", ( String ) null );
+
+        // when
+        final Document document = mapper.mapNode( jsonNode );
+
+        // then
+        assertThat( document ).isNotNull();
+        assertThat( document.externalId() ).isEqualTo( "12345" );
+        assertThat( document.title() ).isNull();
+    }
+
+    @Test
+    void testMapNodeWhenValueIsNullOrBlank()
+    {
+        // given
+        final JsonNode nullNode = objectMapper.createObjectNode().putNull( "title" );
+        final JsonNode blankNode = objectMapper.createObjectNode().put( "title", " " );
+
+        // when
+        final Document resultForNull = mapper.mapNode( nullNode );
+        final Document resultForBlank = mapper.mapNode( blankNode );
+
+        // then
+        assertNotNull( resultForNull );
+        assertNull( resultForNull.title() );
+
+        assertNotNull( resultForBlank );
+        assertNull( resultForBlank.title() );
+    }
+
+    @Test
+    void testMapNodeWithFallbackDateParsing()
+    {
+        // given
+        final JsonNode validDateTimeNode = objectMapper.createObjectNode().put( "createdAt", "2025-11-28T10:15:30" );
+        final JsonNode validInstantNode = objectMapper.createObjectNode().put( "createdAt", "2025-11-28T10:15:30Z" );
+        final JsonNode invalidDateNode = objectMapper.createObjectNode().put( "createdAt", "invalid-date" );
+
+        // when
+        final Document resultForValidDateTime = mapper.mapNode( validDateTimeNode );
+        final Document resultForValidInstant = mapper.mapNode( validInstantNode );
+        final Document resultForInvalidDate = mapper.mapNode( invalidDateNode );
+
+        // then
+        assertNotNull( resultForValidDateTime );
+        assertEquals( LocalDateTime.parse( "2025-11-28T10:15:30" ), resultForValidDateTime.createdAt() );
+
+        assertNotNull( resultForValidInstant );
+        assertEquals( LocalDateTime.ofInstant( Instant.parse( "2025-11-28T10:15:30Z" ), ZoneId.systemDefault() ),
+            resultForValidInstant.createdAt() );
+
+        assertNotNull( resultForInvalidDate );
+        assertNull( resultForInvalidDate.createdAt() );
     }
 }
