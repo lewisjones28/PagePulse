@@ -133,4 +133,20 @@ class ConfluenceDocumentMapperTest
         // then
         assertThat( docEmptyResults.tags() ).isEmpty();
     }
+
+    @Test
+    void testMapNodeWhenTitleIsNull()
+    {
+        // given
+        final JsonNode jsonNode = objectMapper.createObjectNode().put( "id", "12345" )
+            .put( "title", ( String ) null );
+
+        // when
+        final Document document = mapper.mapNode( jsonNode );
+
+        // then
+        assertThat( document ).isNotNull();
+        assertThat( document.externalId() ).isEqualTo( "12345" );
+        assertThat( document.title() ).isNull();
+    }
 }
