@@ -7,7 +7,7 @@
 - enable profile when running: `SPRING_PROFILES_ACTIVE=local mvn spring-boot:run`
 
 ## Overview
-The **PagePulse Orchestrator** is the core module responsible for coordinating all business logic, auditing workflows, rule evaluation, and documentDto processing. It serves as the main application entry point and analyzes Confluence content for staleness, compliance, and overall documentation health.
+The **PagePulse Orchestrator** is the core module responsible for coordinating all business logic, auditing workflows, rule evaluation, and document processing. It serves as the main application entry point and analyzes Confluence content for staleness, compliance, and overall documentation health.
 
 It is designed to be modular and extensible, enabling developers to add new rules, API integrations, and custom workflows.
 

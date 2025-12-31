@@ -4,14 +4,14 @@
 `pp-domain` contains the shared JPA entities used across the PagePulse platform. The module centralizes persistence models so features like the orchestrator and future services can reuse a single canonical representation.
 
 ## Contents
-- `com.page.pulse.domain.entity.Document` – core Confluence-derived document entity used during audits
+- `Document` – core Confluence-derived document entity used during audits
 - `Auditable` base class – reusable auditing metadata (created/updated timestamps and users)
 
 ## Building & Testing
 This module is part of the multi-module Maven build. To compile and run its unit tests in isolation:
 
 ```bash
-cd /Users/lewisjones/git/PagePulse
+cd /Users/.../git/PagePulse
 mvn -pl pp-domain test
 ```
 
