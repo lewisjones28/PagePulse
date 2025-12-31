@@ -1,6 +1,7 @@
 package com.page.pulse.orchestrator.scheduled;
 
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
 import com.page.pulse.orchestrator.service.ConfluenceApiService;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 
 import static com.page.pulse.confluence.client.page.params.constants.ConfluencePageParamConstants.CURRENT_STATUS_PARAM;
 
@@ -49,10 +51,17 @@ public class DocumentScanTask
         final ConfluencePageParams params = ConfluencePageParams.empty()
             .status( Collections.singletonList( CURRENT_STATUS_PARAM ) );
 
-        apiService.collectPages( params )
-            .stream()
-            .flatMap( doc -> ruleEngine.evaluate( doc ).stream() )
-            .forEach( this::raiseAlert );
+        final List<DocumentDto> documentDtos = apiService.collectPages( params )
+            .stream().toList();
+
+        for ( final DocumentDto documentDto : documentDtos )
+        {
+            final List<RuleEvaluation> evaluations = ruleEngine.evaluate( documentDto );
+            for ( final RuleEvaluation evaluation : evaluations )
+            {
+                raiseAlert( evaluation );
+            }
+        }
 
         log.info( "documentScanTask complete" );
     }

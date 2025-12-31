@@ -1,6 +1,6 @@
 package com.page.pulse.orchestrator.rule;
 
-import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleResult;
 
 /**
@@ -21,8 +21,8 @@ public interface DocumentRule
     /**
      * Evaluates the rule against the provided Document.
      *
-     * @param document the Document to evaluate
+     * @param documentDto the Document to evaluate
      * @return the result of the rule evaluation
      */
-    RuleResult evaluate( Document document );
+    RuleResult evaluate( DocumentDto documentDto );
 }

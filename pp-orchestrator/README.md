@@ -1,7 +1,13 @@
 # PagePulse Orchestrator
 
+## Database Connectivity
+- relies on MySQL; set `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
+- local profile (`local`) reads from `application-local.yml`
+- run MySQL locally (Docker): `docker run --name page-pulse-mysql -e MYSQL_DATABASE=page_pulse -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql:8`
+- enable profile when running: `SPRING_PROFILES_ACTIVE=local mvn spring-boot:run`
+
 ## Overview
-The **PagePulse Orchestrator** is the core module responsible for coordinating all business logic, auditing workflows, rule evaluation, and document processing. It serves as the main application entry point and analyzes Confluence content for staleness, compliance, and overall documentation health.
+The **PagePulse Orchestrator** is the core module responsible for coordinating all business logic, auditing workflows, rule evaluation, and documentDto processing. It serves as the main application entry point and analyzes Confluence content for staleness, compliance, and overall documentation health.
 
 It is designed to be modular and extensible, enabling developers to add new rules, API integrations, and custom workflows.
 
@@ -51,7 +57,7 @@ Applies a configurable set of rules to documents.
 ```java
 @Service
 public class DocumentRuleEngine {
-    public RuleEvaluation evaluateDocument(Document document, List<DocumentRule> rules) { }
+    public RuleEvaluation evaluateDocument(Document documentDto, List<DocumentRule> rules) { }
 }
 ```
 
@@ -62,7 +68,7 @@ All rules implement this interface.
 ```java
 public interface DocumentRule {
     String name();
-    RuleResult evaluate(Document document);
+    RuleResult evaluate(Document documentDto);
 }
 ```
 
@@ -75,8 +81,8 @@ public interface DocumentRule {
 public class MissingLabelRule implements DocumentRule {
     public String name() { return "missing-label-check"; }
 
-    public RuleResult evaluate(Document document) {
-        boolean hasLabel = document.getLabels().contains("required-label");
+    public RuleResult evaluate(Document documentDto) {
+        boolean hasLabel = documentDto.getLabels().contains("required-label");
         return hasLabel ? RuleResult.passed() : RuleResult.violation("Missing required label");
     }
 }
@@ -110,7 +116,7 @@ Runs automated audits on a schedule.
 ```java
 @Component
 public class DocumentScanTask {
-    @Scheduled(fixedRateString = "${document.scan.interval:3600000}")
+    @Scheduled(fixedRateString = "${documentDto.scan.interval:3600000}")
     public void scanDocuments() { }
 }
 ```

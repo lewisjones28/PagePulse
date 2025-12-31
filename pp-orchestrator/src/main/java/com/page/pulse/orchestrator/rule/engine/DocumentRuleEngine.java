@@ -1,6 +1,6 @@
 package com.page.pulse.orchestrator.rule.engine;
 
-import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.rule.DocumentRule;
 import org.springframework.stereotype.Service;
@@ -31,11 +31,11 @@ public class DocumentRuleEngine
     /**
      * Evaluates all registered rules against the provided Document.
      *
-     * @param document the Document to evaluate
+     * @param documentDto the Document to evaluate
      * @return a list of RuleEvaluations representing the results of each rule evaluation
      */
-    public List<RuleEvaluation> evaluate( final Document document )
+    public List<RuleEvaluation> evaluate( final DocumentDto documentDto )
     {
-        return rules.stream().map( rule -> new RuleEvaluation( rule.name(), rule.evaluate( document ) ) ).toList();
+        return rules.stream().map( rule -> new RuleEvaluation( rule.name(), rule.evaluate( documentDto ) ) ).toList();
     }
 }

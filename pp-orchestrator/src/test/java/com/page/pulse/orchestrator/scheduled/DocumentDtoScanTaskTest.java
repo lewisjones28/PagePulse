@@ -1,6 +1,6 @@
 package com.page.pulse.orchestrator.scheduled;
 
-import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.pojo.rule.RuleResult;
 import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author lewisjones
  */
 @ExtendWith( MockitoExtension.class )
-class DocumentScanTaskTest
+class DocumentDtoScanTaskTest
 {
 
     @Mock
@@ -33,12 +33,12 @@ class DocumentScanTaskTest
     private DocumentRuleEngine ruleEngine;
     @InjectMocks
     private DocumentScanTask documentScanTask;
-    private Document sampleDocument;
+    private DocumentDto sampleDocumentDto;
 
     @BeforeEach
     void setUp()
     {
-        sampleDocument = new Document( "doc1", "owner1", "Title", "current", List.of( "tag1" ), LocalDateTime.now(),
+        sampleDocumentDto = new DocumentDto( "doc1", "owner1", "Title", "current", List.of( "tag1" ), LocalDateTime.now(),
             LocalDateTime.now() );
     }
 
@@ -50,13 +50,13 @@ class DocumentScanTaskTest
         final RuleEvaluation evaluation = new RuleEvaluation( "RuleA", passResult );
 
         // when
-        when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocument ) );
-        when( ruleEngine.evaluate( sampleDocument ) ).thenReturn( List.of( evaluation ) );
+        when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocumentDto ) );
+        when( ruleEngine.evaluate( sampleDocumentDto ) ).thenReturn( List.of( evaluation ) );
         documentScanTask.documentScanTask();
 
         // then
         verify( apiService, times( 1 ) ).collectPages( any() );
-        verify( ruleEngine, times( 1 ) ).evaluate( sampleDocument );
+        verify( ruleEngine, times( 1 ) ).evaluate( sampleDocumentDto );
     }
 
     @Test
@@ -67,14 +67,14 @@ class DocumentScanTaskTest
         final RuleEvaluation evaluation = new RuleEvaluation( "RuleA", failResult );
 
         // when
-        when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocument ) );
-        when( ruleEngine.evaluate( sampleDocument ) ).thenReturn( List.of( evaluation ) );
+        when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocumentDto ) );
+        when( ruleEngine.evaluate( sampleDocumentDto ) ).thenReturn( List.of( evaluation ) );
 
         documentScanTask.documentScanTask();
 
         // then
         verify( apiService, times( 1 ) ).collectPages( any() );
-        verify( ruleEngine, times( 1 ) ).evaluate( sampleDocument );
+        verify( ruleEngine, times( 1 ) ).evaluate( sampleDocumentDto );
     }
 
     @Test

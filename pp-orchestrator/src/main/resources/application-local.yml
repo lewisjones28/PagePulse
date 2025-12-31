@@ -2,3 +2,13 @@
 logging:
   level:
     feign: DEBUG
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/page_pulse
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true

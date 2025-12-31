@@ -3,7 +3,7 @@ package com.page.pulse.orchestrator.mapper.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
-import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.utils.JsonNodeUtils;
 import com.page.pulse.orchestrator.utils.MappingUtils;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import static com.page.pulse.confluence.client.page.params.constants.ConfluenceP
  * @author lewisjones
  */
 @Component
-public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
+public class ConfluenceDocumentMapper extends BaseDocumentMapper<DocumentDto>
 {
     /**
      * Maps a JsonNode representing a Confluence page to a Document object.
@@ -29,7 +29,7 @@ public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
      * @return the mapped Document object
      */
     @Override
-    protected Document mapNode( final JsonNode node )
+    protected DocumentDto mapNode( final JsonNode node )
     {
         if ( node == null || node.isNull() )
         {
@@ -69,6 +69,6 @@ public class ConfluenceDocumentMapper extends BaseDocumentMapper<Document>
             }
         }
 
-        return new Document( externalId, externalOwnerId, title, status, tags, createdAtDateTime, updatedAtDateTime );
+        return new DocumentDto( externalId, externalOwnerId, title, status, tags, createdAtDateTime, updatedAtDateTime );
     }
 }
