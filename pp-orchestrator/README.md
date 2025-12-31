@@ -56,8 +56,11 @@ Applies a configurable set of rules to documents.
 
 ```java
 @Service
-public class DocumentRuleEngine {
-    public RuleEvaluation evaluateDocument(Document documentDto, List<DocumentRule> rules) { }
+public class DocumentRuleEngine
+{
+   public RuleEvaluation evaluateDocument( Document documentDto, List<DocumentRule> rules )
+   {
+   }
 }
 ```
 
@@ -66,9 +69,11 @@ public class DocumentRuleEngine {
 All rules implement this interface.
 
 ```java
-public interface DocumentRule {
-    String name();
-    RuleResult evaluate(Document documentDto);
+public interface DocumentRule
+{
+   String name();
+
+   RuleResult evaluate( Document documentDto );
 }
 ```
 
@@ -78,13 +83,18 @@ public interface DocumentRule {
 
 ```java
 @Component
-public class MissingLabelRule implements DocumentRule {
-    public String name() { return "missing-label-check"; }
+public class MissingLabelRule implements DocumentRule
+{
+   public String name()
+   {
+      return "missing-label-check";
+   }
 
-    public RuleResult evaluate(Document documentDto) {
-        boolean hasLabel = documentDto.getLabels().contains("required-label");
-        return hasLabel ? RuleResult.passed() : RuleResult.violation("Missing required label");
-    }
+   public RuleResult evaluate( Document documentDto )
+   {
+      boolean hasLabel = documentDto.getLabels().contains( "required-label" );
+      return hasLabel ? RuleResult.passed() : RuleResult.violation( "Missing required label" );
+   }
 }
 ```
 
@@ -98,8 +108,11 @@ Maps raw Confluence JSON to internal `Document` objects.
 
 ```java
 @Component
-public class ConfluenceDocumentMapper implements BaseDocumentMapper {
-    public Document mapToDocument(JsonNode confluencePageJson) { }
+public class ConfluenceDocumentMapper implements BaseDocumentMapper
+{
+   public Document mapToDocument( JsonNode confluencePageJson )
+   {
+   }
 }
 ```
 
@@ -114,10 +127,14 @@ public class ConfluenceDocumentMapper implements BaseDocumentMapper {
 Runs automated audits on a schedule.
 
 ```java
+
 @Component
-public class DocumentScanTask {
-    @Scheduled(fixedRateString = "${documentDto.scan.interval:3600000}")
-    public void scanDocuments() { }
+public class DocumentScanTask
+{
+   @Scheduled( cron = "${document.cron-expression}" )
+   public void scanDocuments()
+   {
+   }
 }
 ```
 
