@@ -15,7 +15,7 @@ import java.util.List;
  * @param updatedAt       the last updated timestamp of the document
  * @author lewisjones
  */
-public record Document( String externalId, String externalOwnerId, String title, String status, List<String> tags,
-                       LocalDateTime createdAt, LocalDateTime updatedAt )
+public record DocumentDto( String externalId, String externalOwnerId, String title, String status, List<String> tags,
+                          LocalDateTime createdAt, LocalDateTime updatedAt )
 {
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.page.pulse.confluence.client.ConfluenceApiClient;
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
 import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
-import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class ConfluenceApiService
 
     private static final Logger log = LoggerFactory.getLogger( ConfluenceApiService.class );
     private final ConfluenceApiClient confluenceApiClient;
-    private final BaseDocumentMapper<Document> documentMapper;
+    private final BaseDocumentMapper<DocumentDto> documentMapper;
 
     /**
      * Constructor for ConfluenceApiService.
@@ -31,7 +31,7 @@ public class ConfluenceApiService
      * @param confluenceApiClient the Feign client for Confluence API
      * @param documentMapper the MapStruct mapper to convert JsonNode to PageDto
      */
-    public ConfluenceApiService( final ConfluenceApiClient confluenceApiClient, final BaseDocumentMapper<Document> documentMapper )
+    public ConfluenceApiService( final ConfluenceApiClient confluenceApiClient, final BaseDocumentMapper<DocumentDto> documentMapper )
     {
         this.confluenceApiClient = confluenceApiClient;
         this.documentMapper = documentMapper;
@@ -71,7 +71,7 @@ public class ConfluenceApiService
      * @param params optional query params to influence the listing request
      * @return list of Document records (may be empty)
      */
-    public List<Document> collectPages( final ConfluencePageParams params )
+    public List<DocumentDto> collectPages( final ConfluencePageParams params )
     {
         // Normalize params so callers can pass null safely; then ensure 'current' status.
         final ConfluencePageParams finalParams = ( params == null ) ? ConfluencePageParams.empty() : params;

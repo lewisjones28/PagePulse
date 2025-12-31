@@ -3,6 +3,7 @@ package com.page.pulse.orchestrator.service;
 import java.util.List;
 import java.util.Map;
 
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.page.pulse.confluence.client.ConfluenceApiClient;
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
 import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
-import com.page.pulse.orchestrator.pojo.Document;
 
 /**
  * Unit tests for {@link ConfluenceApiService}.
@@ -33,7 +33,7 @@ class ConfluenceApiServiceTest
     @Mock
     private ConfluenceApiClient confluenceApiClient;
     @Mock
-    private BaseDocumentMapper<Document> documentMapper;
+    private BaseDocumentMapper<DocumentDto> documentMapper;
     @InjectMocks
     private ConfluenceApiService confluenceApiService;
 
@@ -45,7 +45,7 @@ class ConfluenceApiServiceTest
         final JsonNode mockPagesResponse = mock( JsonNode.class );
         final JsonNode mockIdNode1 = mock( JsonNode.class );
         final JsonNode mockPageDetails1 = mock( JsonNode.class );
-        final Document mockDocument1 = mock( Document.class );
+        final DocumentDto mockDocumentDto1 = mock( DocumentDto.class );
 
         // when
         when( params.isEmpty() ).thenReturn( false );
@@ -55,12 +55,12 @@ class ConfluenceApiServiceTest
         when( mockPagesResponse.findValues( "id" ) ).thenReturn( List.of( mockIdNode1 ) );
         when( mockIdNode1.asText() ).thenReturn( PAGE_1_ID );
         when( confluenceApiClient.getPage( eq( PAGE_1_ID ), any( Map.class ) ) ).thenReturn( mockPageDetails1 );
-        when( documentMapper.toDocumentList( List.of( mockPageDetails1 ) ) ).thenReturn( List.of( mockDocument1 ) );
+        when( documentMapper.toDocumentList( List.of( mockPageDetails1 ) ) ).thenReturn( List.of( mockDocumentDto1 ) );
 
-        final List<Document> result = confluenceApiService.collectPages( params );
+        final List<DocumentDto> result = confluenceApiService.collectPages( params );
 
         // then
-        assertThat( result ).hasSize( 1 ).containsExactly( mockDocument1 );
+        assertThat( result ).hasSize( 1 ).containsExactly( mockDocumentDto1 );
     }
 
     @Test
@@ -73,7 +73,7 @@ class ConfluenceApiServiceTest
         when( confluenceApiClient.getPages() ).thenReturn( mockPagesResponse );
         when( mockPagesResponse.isNull() ).thenReturn( true );
 
-        final List<Document> result = confluenceApiService.collectPages( null );
+        final List<DocumentDto> result = confluenceApiService.collectPages( null );
 
         // then
         assertThat( result ).isEmpty();
@@ -90,7 +90,7 @@ class ConfluenceApiServiceTest
         when( params.toMap() ).thenReturn( Map.of( "status", "current" ) );
         when( confluenceApiClient.getPages( any( Map.class ) ) ).thenThrow( new RuntimeException( "API error" ) );
 
-        final List<Document> result = confluenceApiService.collectPages( params );
+        final List<DocumentDto> result = confluenceApiService.collectPages( params );
 
         // then
         assertThat( result ).isEmpty();
@@ -111,7 +111,7 @@ class ConfluenceApiServiceTest
         when( mockPagesResponse.findValues( "id" ) ).thenReturn( List.of() );
         when( documentMapper.toDocumentList( List.of() ) ).thenReturn( List.of() );
 
-        final List<Document> result = confluenceApiService.collectPages( params );
+        final List<DocumentDto> result = confluenceApiService.collectPages( params );
 
         // then
         assertThat( result ).isEmpty();

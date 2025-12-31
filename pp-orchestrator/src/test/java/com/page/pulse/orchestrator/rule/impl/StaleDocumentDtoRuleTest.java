@@ -1,31 +1,29 @@
 package com.page.pulse.orchestrator.rule.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.page.pulse.orchestrator.pojo.DocumentDto;
+import com.page.pulse.orchestrator.pojo.rule.RuleResult;
+import com.page.pulse.orchestrator.rule.impl.properties.StaleDocumentRuleProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.time.LocalDateTime;
+import java.util.List;
 
-import com.page.pulse.orchestrator.pojo.Document;
-import com.page.pulse.orchestrator.pojo.rule.RuleResult;
-import com.page.pulse.orchestrator.rule.impl.properties.StaleDocumentRuleProperties;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link StaleDocumentRule}.
  *
  * @author lewisjones
  */
-class StaleDocumentRuleTest
+class StaleDocumentDtoRuleTest
 {
-    private StaleDocumentRuleProperties props;
     private StaleDocumentRule rule;
 
     @BeforeEach
     void setUp()
     {
-        props = new StaleDocumentRuleProperties();
+        final StaleDocumentRuleProperties props = new StaleDocumentRuleProperties();
         props.setDaysThreshold( Integer.parseInt( "30" ) );
         rule = new StaleDocumentRule( props );
     }
@@ -34,8 +32,8 @@ class StaleDocumentRuleTest
     void testEvaluateWhenDocumentIsNotStale()
     {
         // given
-        final Document doc =
-            new Document( "doc1", "owner1", "Title", "current", List.of( "tag1" ), LocalDateTime.now().minusDays( 40 ),
+        final DocumentDto doc = new DocumentDto( "doc1", "owner1", "Title", "current", List.of( "tag1" ),
+            LocalDateTime.now().minusDays( 40 ),
                 LocalDateTime.now().minusDays( Long.parseLong( "10" ) ) );
 
         // when
@@ -51,7 +49,7 @@ class StaleDocumentRuleTest
     void testEvaluateWhenDocumentIsStale()
     {
         // given
-        final Document doc = new Document( "doc2", "owner2", "Title", "current", List.of( "tag2" ),
+        final DocumentDto doc = new DocumentDto( "doc2", "owner2", "Title", "current", List.of( "tag2" ),
             LocalDateTime.now().minusDays( Long.parseLong( "100" ) ),
             LocalDateTime.now().minusDays( Long.parseLong( "50" ) ) );
 
@@ -68,7 +66,7 @@ class StaleDocumentRuleTest
     void testEvaluateWhenDocumentIsExactlyThreshold()
     {
         // given
-        final Document doc = new Document( "doc3", "owner3", "Title", "current", List.of( "tag3" ),
+        final DocumentDto doc = new DocumentDto( "doc3", "owner3", "Title", "current", List.of( "tag3" ),
             LocalDateTime.now().minusDays( Long.parseLong( "31" ) ),
             LocalDateTime.now().minusDays( Long.parseLong( "30" ) ) );
 

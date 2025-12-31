@@ -1,15 +1,18 @@
 package com.page.pulse.orchestrator.scheduled;
 
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
 import com.page.pulse.orchestrator.service.ConfluenceApiService;
+import com.page.pulse.orchestrator.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 
 import static com.page.pulse.confluence.client.page.params.constants.ConfluencePageParamConstants.CURRENT_STATUS_PARAM;
 
@@ -25,17 +28,21 @@ public class DocumentScanTask
     private static final Logger log = LoggerFactory.getLogger( DocumentScanTask.class );
     private final ConfluenceApiService apiService;
     private final DocumentRuleEngine ruleEngine;
+    private final DocumentService documentService;
 
     /**
      * Constructs a DocumentScanTask with the provided ConfluenceApiService and DocumentRuleEngine.
      *
      * @param apiService the service to interact with Confluence API
      * @param ruleEngine the engine to evaluate document rules
+     * @param documentService the service to persist documents
      */
-    public DocumentScanTask( final ConfluenceApiService apiService, final DocumentRuleEngine ruleEngine )
+    public DocumentScanTask( final ConfluenceApiService apiService, final DocumentRuleEngine ruleEngine,
+                             final DocumentService documentService )
     {
         this.apiService = apiService;
         this.ruleEngine = ruleEngine;
+        this.documentService = documentService;
     }
 
     /**
@@ -49,10 +56,18 @@ public class DocumentScanTask
         final ConfluencePageParams params = ConfluencePageParams.empty()
             .status( Collections.singletonList( CURRENT_STATUS_PARAM ) );
 
-        apiService.collectPages( params )
-            .stream()
-            .flatMap( doc -> ruleEngine.evaluate( doc ).stream() )
-            .forEach( this::raiseAlert );
+        final List<DocumentDto> documentDtos = apiService.collectPages( params )
+            .stream().toList();
+
+        for ( final DocumentDto documentDto : documentDtos )
+        {
+            documentService.saveOrUpdate( documentDto );
+            final List<RuleEvaluation> evaluations = ruleEngine.evaluate( documentDto );
+            for ( final RuleEvaluation evaluation : evaluations )
+            {
+                raiseAlert( evaluation );
+            }
+        }
 
         log.info( "documentScanTask complete" );
     }

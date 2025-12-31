@@ -2,7 +2,7 @@ package com.page.pulse.orchestrator.mapper.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.page.pulse.orchestrator.pojo.Document;
+import com.page.pulse.orchestrator.pojo.DocumentDto;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author lewisjones
  */
-class ConfluenceDocumentMapperTest
+class ConfluenceDocumentDtoMapperTest
 {
     private final ConfluenceDocumentMapper mapper = new ConfluenceDocumentMapper();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -51,11 +51,11 @@ class ConfluenceDocumentMapperTest
             },
             "labels": { "results": [] }
          }
-            """;
+         """;
        final JsonNode node = objectMapper.readTree( json );
 
         // when
-        final Document doc = mapper.mapNode( node );
+        final DocumentDto doc = mapper.mapNode( node );
 
         // then
         assertThat( doc.externalId() ).isEqualTo( "abc123" );
@@ -90,7 +90,7 @@ class ConfluenceDocumentMapperTest
         final JsonNode node = objectMapper.readTree( json );
 
         // when
-        final Document doc = mapper.mapNode( node );
+        final DocumentDto doc = mapper.mapNode( node );
 
         // then
         assertThat( doc.tags() ).containsExactly( "tag1", "tag2" );
@@ -112,7 +112,7 @@ class ConfluenceDocumentMapperTest
         final JsonNode nodeNoLabels = objectMapper.readTree( jsonNoLabels );
 
         // when
-        final Document docNoLabels = mapper.mapNode( nodeNoLabels );
+        final DocumentDto docNoLabels = mapper.mapNode( nodeNoLabels );
 
         // then
         assertThat( docNoLabels.tags() ).isEmpty();
@@ -131,7 +131,7 @@ class ConfluenceDocumentMapperTest
         final JsonNode nodeEmptyResults = objectMapper.readTree( jsonEmptyResults );
 
         // when
-        final Document docEmptyResults = mapper.mapNode( nodeEmptyResults );
+        final DocumentDto docEmptyResults = mapper.mapNode( nodeEmptyResults );
 
         // then
         assertThat( docEmptyResults.tags() ).isEmpty();
@@ -145,12 +145,12 @@ class ConfluenceDocumentMapperTest
             .put( "title", ( String ) null );
 
         // when
-        final Document document = mapper.mapNode( jsonNode );
+        final DocumentDto documentDto = mapper.mapNode( jsonNode );
 
         // then
-        assertThat( document ).isNotNull();
-        assertThat( document.externalId() ).isEqualTo( "12345" );
-        assertThat( document.title() ).isNull();
+        assertThat( documentDto ).isNotNull();
+        assertThat( documentDto.externalId() ).isEqualTo( "12345" );
+        assertThat( documentDto.title() ).isNull();
     }
 
     @Test
@@ -161,8 +161,8 @@ class ConfluenceDocumentMapperTest
         final JsonNode blankNode = objectMapper.createObjectNode().put( "title", " " );
 
         // when
-        final Document resultForNull = mapper.mapNode( nullNode );
-        final Document resultForBlank = mapper.mapNode( blankNode );
+        final DocumentDto resultForNull = mapper.mapNode( nullNode );
+        final DocumentDto resultForBlank = mapper.mapNode( blankNode );
 
         // then
         assertNotNull( resultForNull );
@@ -181,9 +181,9 @@ class ConfluenceDocumentMapperTest
         final JsonNode invalidDateNode = objectMapper.createObjectNode().put( "createdAt", "invalid-date" );
 
         // when
-        final Document resultForValidDateTime = mapper.mapNode( validDateTimeNode );
-        final Document resultForValidInstant = mapper.mapNode( validInstantNode );
-        final Document resultForInvalidDate = mapper.mapNode( invalidDateNode );
+        final DocumentDto resultForValidDateTime = mapper.mapNode( validDateTimeNode );
+        final DocumentDto resultForValidInstant = mapper.mapNode( validInstantNode );
+        final DocumentDto resultForInvalidDate = mapper.mapNode( invalidDateNode );
 
         // then
         assertNotNull( resultForValidDateTime );

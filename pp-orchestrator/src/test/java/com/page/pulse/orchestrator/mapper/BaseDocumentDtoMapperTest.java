@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @author lewisjones
  */
-class BaseDocumentMapperTest
+class BaseDocumentDtoMapperTest
 {
     private final ObjectMapper objectMapper = new ObjectMapper();
 

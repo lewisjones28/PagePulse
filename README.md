@@ -141,7 +141,7 @@ PagePulse includes Spring Boot Actuator for real-time monitoring:
 
 ## To Do
 - [ ] `Document` changes
-  - [ ] Internal `lastUpdated` field
+  - [X] Internal `lastUpdated` field
   - [ ] Cache in Redis
 - [ ] Cache Confluence API responses into Redis
 - [ ] Implement notification system (e.g., email, Slack) for Rule violations
