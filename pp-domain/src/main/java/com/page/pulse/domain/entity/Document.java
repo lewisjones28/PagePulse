@@ -14,7 +14,7 @@ import java.util.List;
  * @author lewisjones
  */
 @Entity
-@Table( name = "documents" )
+@Table( name = "documents", indexes = { @Index( name = "idx_documents_external_id", columnList = "external_id" ) } )
 @Getter
 @Setter
 @NoArgsConstructor( access = AccessLevel.PROTECTED )
