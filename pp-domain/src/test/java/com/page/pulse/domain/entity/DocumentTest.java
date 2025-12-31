@@ -22,7 +22,7 @@ class DocumentTest
      */
     private static Document document( final String externalId )
     {
-        return new Document( externalId, "owner", "title", "status", List.of( "tag" ) );
+        return new Document( externalId, "owner", "title", "status", List.of( "tag" ), null, null );
     }
 
     @Test

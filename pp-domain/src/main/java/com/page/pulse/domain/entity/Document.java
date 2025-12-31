@@ -1,12 +1,9 @@
 package com.page.pulse.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,35 +16,41 @@ import java.util.List;
 @Entity
 @Table( name = "documents" )
 @Getter
+@Setter
 @NoArgsConstructor( access = AccessLevel.PROTECTED )
 @EqualsAndHashCode( of = "externalId", callSuper = false )
+@ToString
+@AllArgsConstructor
 public class Document extends Auditable<String>
 {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
-    @NotBlank
     @Column( name = "external_id", nullable = false, unique = true )
     private String externalId;
 
-    @NotBlank
     @Column( name = "external_owner_id", nullable = false )
     private String externalOwnerId;
 
-    @NotBlank
     @Column( nullable = false )
     private String title;
 
-    @NotBlank
     @Column( nullable = false )
     private String status;
 
     @ElementCollection( fetch = FetchType.EAGER )
     private final List<String> tags = new ArrayList<>();
 
+    @Column( name = "document_created_at" )
+    private LocalDateTime documentLastCreatedAt;
+
+    @Column( name = "document_updated_at" )
+    private LocalDateTime documentLastUpdatedAt;
+
     public Document( final String externalId, final String externalOwnerId, final String title, final String status,
-                     final Collection<String> tags )
+                     final Collection<String> tags, final LocalDateTime documentLastCreatedAt,
+                     final LocalDateTime documentLastUpdatedAt )
     {
         this.externalId = externalId;
         this.externalOwnerId = externalOwnerId;
@@ -57,5 +60,7 @@ public class Document extends Auditable<String>
         {
             this.tags.addAll( tags );
         }
+        this.documentLastCreatedAt = documentLastCreatedAt == null ? LocalDateTime.now() : documentLastCreatedAt;
+        this.documentLastUpdatedAt = documentLastUpdatedAt == null ? LocalDateTime.now() : documentLastUpdatedAt;
     }
 }

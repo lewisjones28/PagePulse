@@ -5,6 +5,7 @@ import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.pojo.rule.RuleResult;
 import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
 import com.page.pulse.orchestrator.service.ConfluenceApiService;
+import com.page.pulse.orchestrator.service.DocumentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,8 @@ class DocumentDtoScanTaskTest
     private ConfluenceApiService apiService;
     @Mock
     private DocumentRuleEngine ruleEngine;
+    @Mock
+    private DocumentService documentService;
     @InjectMocks
     private DocumentScanTask documentScanTask;
     private DocumentDto sampleDocumentDto;
@@ -52,9 +55,11 @@ class DocumentDtoScanTaskTest
         // when
         when( apiService.collectPages( any() ) ).thenReturn( List.of( sampleDocumentDto ) );
         when( ruleEngine.evaluate( sampleDocumentDto ) ).thenReturn( List.of( evaluation ) );
+
         documentScanTask.documentScanTask();
 
         // then
+        verify( documentService ).saveOrUpdate( sampleDocumentDto );
         verify( apiService, times( 1 ) ).collectPages( any() );
         verify( ruleEngine, times( 1 ) ).evaluate( sampleDocumentDto );
     }
@@ -73,6 +78,7 @@ class DocumentDtoScanTaskTest
         documentScanTask.documentScanTask();
 
         // then
+        verify( documentService ).saveOrUpdate( sampleDocumentDto );
         verify( apiService, times( 1 ) ).collectPages( any() );
         verify( ruleEngine, times( 1 ) ).evaluate( sampleDocumentDto );
     }
@@ -86,6 +92,7 @@ class DocumentDtoScanTaskTest
         documentScanTask.documentScanTask();
 
         // then
+        verify( documentService, never() ).saveOrUpdate( any() );
         verify( apiService, times( 1 ) ).collectPages( any() );
         verify( ruleEngine, never() ).evaluate( any() );
     }

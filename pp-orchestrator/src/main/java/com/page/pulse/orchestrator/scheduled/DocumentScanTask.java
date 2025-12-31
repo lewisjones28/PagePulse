@@ -5,6 +5,7 @@ import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
 import com.page.pulse.orchestrator.service.ConfluenceApiService;
+import com.page.pulse.orchestrator.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,17 +28,21 @@ public class DocumentScanTask
     private static final Logger log = LoggerFactory.getLogger( DocumentScanTask.class );
     private final ConfluenceApiService apiService;
     private final DocumentRuleEngine ruleEngine;
+    private final DocumentService documentService;
 
     /**
      * Constructs a DocumentScanTask with the provided ConfluenceApiService and DocumentRuleEngine.
      *
      * @param apiService the service to interact with Confluence API
      * @param ruleEngine the engine to evaluate document rules
+     * @param documentService the service to persist documents
      */
-    public DocumentScanTask( final ConfluenceApiService apiService, final DocumentRuleEngine ruleEngine )
+    public DocumentScanTask( final ConfluenceApiService apiService, final DocumentRuleEngine ruleEngine,
+                             final DocumentService documentService )
     {
         this.apiService = apiService;
         this.ruleEngine = ruleEngine;
+        this.documentService = documentService;
     }
 
     /**
@@ -56,6 +61,7 @@ public class DocumentScanTask
 
         for ( final DocumentDto documentDto : documentDtos )
         {
+            documentService.saveOrUpdate( documentDto );
             final List<RuleEvaluation> evaluations = ruleEngine.evaluate( documentDto );
             for ( final RuleEvaluation evaluation : evaluations )
             {
