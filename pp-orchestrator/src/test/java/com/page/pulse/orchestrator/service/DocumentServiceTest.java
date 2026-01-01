@@ -77,4 +77,21 @@ class DocumentServiceTest
         assertThat( existing.getTags() ).containsExactly( "tag" );
         verify( repository, never() ).save( existing );
     }
+
+    @Test
+    void testGetDocumentByExternalId()
+    {
+        // given
+        final Document document =
+            new Document( "ext-1", "owner", "title", "status", List.of(), LocalDateTime.now(), LocalDateTime.now() );
+
+        // when
+        when( repository.findByExternalId( "ext-1" ) ).thenReturn( Optional.of( document ) );
+
+        final Optional<Document> result = service.getDocumentByExternalId( "ext-1" );
+
+        // then
+        assertThat( result ).contains( document );
+        verify( repository ).findByExternalId( "ext-1" );
+    }
 }
