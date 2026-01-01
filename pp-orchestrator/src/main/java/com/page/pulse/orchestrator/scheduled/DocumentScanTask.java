@@ -1,6 +1,8 @@
 package com.page.pulse.orchestrator.scheduled;
 
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
+import com.page.pulse.orchestrator.alert.AlertDispatcher;
+import com.page.pulse.orchestrator.alert.AlertPayload;
 import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
@@ -29,6 +31,7 @@ public class DocumentScanTask
     private final ConfluenceApiService apiService;
     private final DocumentRuleEngine ruleEngine;
     private final DocumentService documentService;
+    private final AlertDispatcher alertDispatcher;
 
     /**
      * Constructs a DocumentScanTask with the provided ConfluenceApiService and DocumentRuleEngine.
@@ -36,13 +39,15 @@ public class DocumentScanTask
      * @param apiService the service to interact with Confluence API
      * @param ruleEngine the engine to evaluate document rules
      * @param documentService the service to persist documents
+     * @param alertDispatcher the dispatcher to send alerts
      */
     public DocumentScanTask( final ConfluenceApiService apiService, final DocumentRuleEngine ruleEngine,
-                             final DocumentService documentService )
+                             final DocumentService documentService, final AlertDispatcher alertDispatcher )
     {
         this.apiService = apiService;
         this.ruleEngine = ruleEngine;
         this.documentService = documentService;
+        this.alertDispatcher = alertDispatcher;
     }
 
     /**
@@ -65,7 +70,7 @@ public class DocumentScanTask
             final List<RuleEvaluation> evaluations = ruleEngine.evaluate( documentDto );
             for ( final RuleEvaluation evaluation : evaluations )
             {
-                raiseAlert( evaluation );
+                raiseAlert( documentDto, evaluation );
             }
         }
 
@@ -75,19 +80,12 @@ public class DocumentScanTask
     /**
      * Raises alerts based on the provided rule evaluations.
      *
+     * @param documentDto the DocumentDto associated with the evaluation
      * @param evaluation the RuleEvaluation to process
      */
-    private void raiseAlert( final RuleEvaluation evaluation )
+    private void raiseAlert( final DocumentDto documentDto, final RuleEvaluation evaluation )
     {
-        if ( evaluation.hasAlerts() )
-        {
-            log.warn( "⚠ [{}] Document {} FAILED: {}", evaluation.ruleName(), evaluation.result().documentId(),
-                evaluation.result().message() );
-        }
-        else
-        {
-            log.info( "✅ [{}] Document {} PASSED", evaluation.ruleName(), evaluation.result().documentId() );
-        }
+        alertDispatcher.dispatch( AlertPayload.of( documentDto, evaluation ) );
     }
 
 }
