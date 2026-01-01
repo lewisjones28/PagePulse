@@ -154,7 +154,6 @@ This design allows multiple channels to operate simultaneously with no changes t
 Runs automated audits on a schedule.
 
 ```java
-
 @Component
 public class DocumentScanTask
 {
@@ -268,6 +267,33 @@ Replace the placeholders in the `docker-compose.yml` file with your actual value
 * External API call metrics
 
 > **Extending:** Add custom health indicators, metrics, or log aggregations for new integrations.
+
+---
+
+## 🔒 Redis Caching
+
+The orchestrator relies on Spring Cache backed by Redis to reduce load on MySQL and Confluence:
+
+- `documents` cache → `DocumentService#getDocumentByExternalId` (read-through) and `saveOrUpdate` (`@CachePut`) keep document lookups hot.
+
+Configuration lives in `application.yml` under `spring.cache`:
+
+```yaml
+spring:
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1h
+      cache-null-values: false
+```
+
+Key points:
+- TTL (`time-to-live`) is honored per cache; set shorter values for Confluence data if pages change often.
+- `CacheConfiguration` configures a Jackson serializer with Java Time support, so `LocalDateTime` fields and `DocumentDto` instances round-trip safely.
+- To force a refresh, evict keys via `CacheManager` or flush Redis (`redis-cli FLUSHDB`)—read operations will repopulate automatically on the next miss.
+- Redis host/port come from `spring.redis.*` properties; override via environment variables when deploying.
+
+Monitor cache health by connecting to Redis (`redis-cli`) and inspecting keys that begin with `page-pulse::documents`, `::confluence-pages`, etc. Adjust TTLs if the data becomes stale or you notice excessive cache misses.
 
 ---
 
