@@ -3,11 +3,14 @@ package com.page.pulse.orchestrator.service;
 import com.page.pulse.domain.entity.Document;
 import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.repository.DocumentRepository;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for managing documents.
@@ -27,6 +30,33 @@ public class DocumentService
     public DocumentService( final DocumentRepository repository )
     {
         this.repository = repository;
+    }
+
+    /**
+     * Retrieve a document by its external ID.
+     *
+     * @param externalId the external id
+     * @return the Document optional
+     */
+    @Cacheable( "documents" )
+    public Optional<Document> getDocumentByExternalId( final String externalId )
+    {
+        return repository.findByExternalId( externalId );
+    }
+
+    /**
+     * Save a new document or update an existing one based on the DTO.
+     *
+     * @param dto the data transfer object
+     * @return the saved or updated document
+     */
+    @Transactional
+    @CachePut( value = "documents", key = "#dto.externalId()" )
+    public Document saveOrUpdate( final DocumentDto dto )
+    {
+        return getDocumentByExternalId( dto.externalId() )
+            .map( document -> updateDocument( document, dto ) )
+            .orElseGet( () -> repository.save( buildDocument( dto ) ) );
     }
 
     /**
@@ -70,20 +100,6 @@ public class DocumentService
     private static List<String> nonNullTags( final List<String> tags )
     {
         return tags == null ? new ArrayList<>() : new ArrayList<>( tags );
-    }
-
-    /**
-     * Save a new document or update an existing one based on the DTO.
-     *
-     * @param dto the data transfer object
-     * @return the saved or updated document
-     */
-    @Transactional
-    public Document saveOrUpdate( final DocumentDto dto )
-    {
-        return repository.findByExternalId( dto.externalId() )
-            .map( document -> updateDocument( document, dto ) )
-            .orElseGet( () -> repository.save( buildDocument( dto ) ) );
     }
 
 }

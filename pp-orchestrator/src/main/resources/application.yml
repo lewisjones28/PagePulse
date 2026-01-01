@@ -13,6 +13,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1h
+      cache-null-values: false
 
 confluence:
   base-url: ${CONFLUENCE_BASE_URL}

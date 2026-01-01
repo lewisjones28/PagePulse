@@ -141,11 +141,6 @@ PagePulse includes Spring Boot Actuator for real-time monitoring:
 - **Application info:** `/actuator/info`
 
 ## To Do
-- [ ] `Document` changes
-  - [X] Internal `lastUpdated` field
-  - [ ] Cache in Redis
-- [ ] Cache Confluence API responses into Redis
-- [ ] Implement notification system (e.g., email, Slack) for Rule violations
 - [ ] New Rule Ideas
   - [ ] Missing Label Rule - Identify pages lacking specific labels (https://diataxis.fr/)
   - [ ] Deactivated Owner Rule - Flag pages owned by deactivated users
