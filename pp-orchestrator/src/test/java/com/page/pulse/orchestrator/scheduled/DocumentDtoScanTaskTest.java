@@ -1,5 +1,6 @@
 package com.page.pulse.orchestrator.scheduled;
 
+import com.page.pulse.orchestrator.alert.AlertDispatcher;
 import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.pojo.rule.RuleResult;
@@ -34,6 +35,8 @@ class DocumentDtoScanTaskTest
     private DocumentRuleEngine ruleEngine;
     @Mock
     private DocumentService documentService;
+    @Mock
+    private AlertDispatcher alertDispatcher;
     @InjectMocks
     private DocumentScanTask documentScanTask;
     private DocumentDto sampleDocumentDto;
@@ -62,6 +65,7 @@ class DocumentDtoScanTaskTest
         verify( documentService ).saveOrUpdate( sampleDocumentDto );
         verify( apiService, times( 1 ) ).collectPages( any() );
         verify( ruleEngine, times( 1 ) ).evaluate( sampleDocumentDto );
+        verify( alertDispatcher ).dispatch( any() );
     }
 
     @Test
@@ -81,6 +85,7 @@ class DocumentDtoScanTaskTest
         verify( documentService ).saveOrUpdate( sampleDocumentDto );
         verify( apiService, times( 1 ) ).collectPages( any() );
         verify( ruleEngine, times( 1 ) ).evaluate( sampleDocumentDto );
+        verify( alertDispatcher ).dispatch( any() );
     }
 
     @Test
@@ -95,5 +100,6 @@ class DocumentDtoScanTaskTest
         verify( documentService, never() ).saveOrUpdate( any() );
         verify( apiService, times( 1 ) ).collectPages( any() );
         verify( ruleEngine, never() ).evaluate( any() );
+        verifyNoInteractions( alertDispatcher );
     }
 }

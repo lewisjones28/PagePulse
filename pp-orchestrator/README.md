@@ -120,6 +120,33 @@ public class ConfluenceDocumentMapper implements BaseDocumentMapper
 
 ---
 
+### 🔔 Alert Channels
+
+The orchestrator emits rule evaluation results through a pluggable **AlertChannel** abstraction located under `com.page.pulse.orchestrator.alert`.
+
+| Component | Responsibility |
+| --- | --- |
+| `AlertChannel` | Interface representing a destination (log, Slack, email, etc.) that can receive alerts. |
+| `AlertPayload` | Record bundling the offending `DocumentDto` and `RuleEvaluation`. |
+| `AlertDispatcher` | Spring bean that fans each payload out to every registered channel. |
+| `DocumentScanTask` | Calls `AlertDispatcher.dispatch(...)` after each rule evaluation instead of logging directly. |
+| `LoggingAlertChannel` | Default implementation that logs pass/fail details; lives in `alert.impl`. |
+
+#### How it works
+1. Each channel is declared as a Spring bean (e.g., `@Component` on `LoggingAlertChannel`).
+2. `AlertConfiguration` collects all `AlertChannel` beans and builds a single `AlertDispatcher`.
+3. `DocumentScanTask` injects the dispatcher and submits an `AlertPayload` for every `RuleEvaluation`.
+4. The dispatcher iterates over enabled channels, ensuring every alert goes through the same workflow.
+
+#### Extending alerts
+- Create a new class implementing `AlertChannel` (e.g., `SlackAlertChannel`).
+- Annotate it with `@Component` (or configuration-specific annotations) so Spring can discover it.
+- Use the provided `AlertPayload` to access the document and rule metadata required by the integration.
+- Add any needed configuration (tokens, URLs) via `application.yml` + `@ConfigurationProperties` in your channel class.
+- Unit test the new channel in `src/test/java/com/page/pulse/orchestrator/alert/...` to validate formatting and transport behavior.
+
+This design allows multiple channels to operate simultaneously with no changes to the scheduler or rule engine—just drop in the new implementation and wire its configuration.
+
 ### Scheduled Tasks
 
 #### `DocumentScanTask`
@@ -274,3 +301,6 @@ Replace the placeholders in the `docker-compose.yml` file with your actual value
 * [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 * [MapStruct Documentation](https://mapstruct.org/documentation/stable/reference/html/)
 * [Confluence REST API v2](https://developer.atlassian.com/cloud/confluence/rest/v2/intro/)
+
+---
+

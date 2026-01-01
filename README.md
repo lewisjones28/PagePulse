@@ -10,6 +10,7 @@ A configurable, automated auditing service designed to keep Confluence spaces he
 PagePulse is built as a multi-module Spring Boot application with a microservices architecture:
 
 - **pp-orchestrator**: Core business logic module that coordinates auditing workflows and processes
+- **pp-domain**: Core business entities and data models shared across modules
 - **pp-confluence-feign**: Feign client module for seamless integration with Atlassian Confluence APIs
 
 ## ✨ Key Features
