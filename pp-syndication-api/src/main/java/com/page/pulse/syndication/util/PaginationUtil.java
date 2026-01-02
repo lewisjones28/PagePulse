@@ -40,16 +40,13 @@ public final class PaginationUtil
             .stream()
             .map( item -> ( com.page.pulse.syndication.model.DocumentApiDto ) contentMapper.apply( item ) )
             .collect( Collectors.toList() ) );
-        pagedDto.setPageable( null ); // TODO: Map pageable
-        pagedDto.setTotalPages( page.getTotalPages() );
-        pagedDto.setTotalElements( page.getTotalElements() );
-        pagedDto.setLast( page.isLast() );
-        pagedDto.setSize( page.getSize() );
-        pagedDto.setNumber( page.getNumber() );
-        pagedDto.setSort( null ); // TODO: Map sort
-        pagedDto.setNumberOfElements( page.getNumberOfElements() );
-        pagedDto.setFirst( page.isFirst() );
-        pagedDto.setEmpty( page.isEmpty() );
+
+        final com.page.pulse.syndication.model.PageInfo pageInfo = new com.page.pulse.syndication.model.PageInfo();
+        pageInfo.setTotalPages( page.getTotalPages() );
+        pageInfo.setTotalElements( page.getTotalElements() );
+        pageInfo.setCurrentPage( page.getNumber() );
+        pagedDto.setPageInfo( pageInfo );
+
         return pagedDto;
     }
 

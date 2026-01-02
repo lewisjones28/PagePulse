@@ -56,27 +56,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DocumentApiDto'
-        pageable:
-          $ref: '#/components/schemas/PaginationApiDto'
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+    PageInfo:
+      type: object
+      properties:
         totalPages:
           type: integer
         totalElements:
           type: integer
           format: int64
-        last:
-          type: boolean
-        size:
+        currentPage:
           type: integer
-        number:
-          type: integer
-        sort:
-          type: object
-        numberOfElements:
-          type: integer
-        first:
-          type: boolean
-        empty:
-          type: boolean
     PaginationApiDto:
       type: object
       properties:
