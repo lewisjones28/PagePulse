@@ -16,13 +16,13 @@ import java.time.ZoneOffset;
  * @author lewisjones
  */
 @Mapper
-public interface DocumentMapper
+public interface DocumentApiMapper
 {
 
     /**
      * Singleton instance of the DocumentMapper.
      */
-    DocumentMapper INSTANCE = Mappers.getMapper( DocumentMapper.class );
+    DocumentApiMapper INSTANCE = Mappers.getMapper( DocumentApiMapper.class );
 
     @Mapping( target = "id", source = "id" )
     DocumentApiDto toDto( Document document );

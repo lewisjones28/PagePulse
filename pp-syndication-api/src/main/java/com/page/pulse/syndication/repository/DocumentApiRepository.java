@@ -5,10 +5,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repository interface for Document entities.
+ * Repository interface for {@link Document} entities.
  *
  * @author lewisjones
  */
 @Repository
-public interface DocumentRepository extends PagingAndSortingRepository<Document, String> {
+public interface DocumentApiRepository extends PagingAndSortingRepository<Document, String>
+{
 }

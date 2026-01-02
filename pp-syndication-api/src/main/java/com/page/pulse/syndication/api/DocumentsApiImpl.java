@@ -1,8 +1,8 @@
 package com.page.pulse.syndication.api;
 
-import com.page.pulse.syndication.mapper.DocumentMapper;
+import com.page.pulse.syndication.mapper.DocumentApiMapper;
 import com.page.pulse.syndication.model.PagedDocumentApiDto;
-import com.page.pulse.syndication.service.DocumentService;
+import com.page.pulse.syndication.service.DocumentApiService;
 import com.page.pulse.syndication.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,8 +24,8 @@ import java.util.List;
 public class DocumentsApiImpl implements DocumentsApi
 {
 
-    private final DocumentService documentService;
-    private final DocumentMapper documentMapper = DocumentMapper.INSTANCE;
+    private final DocumentApiService documentApiService;
+    private final DocumentApiMapper documentApiMapper = DocumentApiMapper.INSTANCE;
 
     /**
      * Retrieves a list of documents.
@@ -40,8 +40,8 @@ public class DocumentsApiImpl implements DocumentsApi
         final List<String> sort )
     {
         final Pageable pageable = PageRequest.of( page, size, Sort.by( PaginationUtil.createSortOrder( sort ) ) );
-        final Page<com.page.pulse.domain.entity.Document> documents = documentService.getDocuments( pageable );
-        final PagedDocumentApiDto response = PaginationUtil.toPagedDto( documents, documentMapper::toDto );
+        final Page<com.page.pulse.domain.entity.Document> documents = documentApiService.getDocuments( pageable );
+        final PagedDocumentApiDto response = PaginationUtil.toPagedDto( documents, documentApiMapper::toDto );
         return ResponseEntity.ok( response );
     }
 }
