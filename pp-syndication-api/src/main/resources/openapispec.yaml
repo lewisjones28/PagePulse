@@ -61,13 +61,13 @@ components:
     PageInfo:
       type: object
       properties:
-        totalPages:
+        page:
           type: integer
-        totalElements:
+        pages:
+          type: integer
+        elements:
           type: integer
           format: int64
-        currentPage:
-          type: integer
     PaginationApiDto:
       type: object
       properties:

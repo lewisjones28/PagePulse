@@ -54,9 +54,9 @@ class DocumentsApiImplTest
             .andExpect( jsonPath( "$.content.length()" ).value( 2 ) )
             .andExpect( jsonPath( "$.content[0].title" ).value( "Title 1" ) )
             .andExpect( jsonPath( "$.content[1].title" ).value( "Title 2" ) )
-            .andExpect( jsonPath( "$.pageInfo.totalPages" ).value( 1 ) )
-            .andExpect( jsonPath( "$.pageInfo.totalElements" ).value( 2 ) )
-            .andExpect( jsonPath( "$.pageInfo.currentPage" ).value( 0 ) );
+            .andExpect( jsonPath( "$.pageInfo.pages" ).value( 1 ) )
+            .andExpect( jsonPath( "$.pageInfo.elements" ).value( 2 ) )
+            .andExpect( jsonPath( "$.pageInfo.page" ).value( 0 ) );
     }
 }
 

@@ -43,9 +43,9 @@ public final class PaginationUtil
             .collect( Collectors.toList() ) );
 
         final com.page.pulse.syndication.model.PageInfo pageInfo = new com.page.pulse.syndication.model.PageInfo();
-        pageInfo.setTotalPages( page.getTotalPages() );
-        pageInfo.setTotalElements( page.getTotalElements() );
-        pageInfo.setCurrentPage( page.getNumber() );
+        pageInfo.setPages( page.getTotalPages() );
+        pageInfo.setElements( page.getTotalElements() );
+        pageInfo.setPage( page.getNumber() );
         pagedDto.setPageInfo( pageInfo );
 
         return pagedDto;

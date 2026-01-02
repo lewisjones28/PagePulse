@@ -85,9 +85,9 @@ class PaginationUtilTest
         assertEquals( 1, pagedDto.getContent().size() );
         assertEquals( document.getTitle(), pagedDto.getContent().getFirst().getTitle() );
         assertNotNull( pagedDto.getPageInfo() );
-        assertEquals( 1, pagedDto.getPageInfo().getTotalPages() );
-        assertEquals( 1, pagedDto.getPageInfo().getTotalElements() );
-        assertEquals( 0, pagedDto.getPageInfo().getCurrentPage() );
+        assertEquals( 1, pagedDto.getPageInfo().getPages() );
+        assertEquals( 1, pagedDto.getPageInfo().getElements() );
+        assertEquals( 0, pagedDto.getPageInfo().getPage() );
     }
 }
 
