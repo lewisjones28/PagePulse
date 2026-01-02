@@ -12,6 +12,7 @@ PagePulse is built as a multi-module Spring Boot application with a microservice
 - **pp-orchestrator**: Core business logic module that coordinates auditing workflows and processes
 - **pp-domain**: Core business entities and data models shared across modules
 - **pp-confluence-feign**: Feign client module for seamless integration with Atlassian Confluence APIs
+- **pp-syndication-api**: Read-only REST API for consuming PagePulse data.
 
 ## ✨ Key Features
 
@@ -64,6 +65,30 @@ mvn clean install
 cd pp-orchestrator
 mvn spring-boot:run
 ```
+
+### 4. Run the syndication API service:
+
+```bash
+cd pp-syndication-api
+mvn spring-boot:run
+```
+
+---
+
+## 📖 Syndication API
+
+PagePulse includes a read-only Syndication API (`pp-syndication-api`) for external consumption of document data.
+
+### Endpoints
+
+- `GET /documents`: Retrieves a paginated list of documents.
+
+### Swagger UI
+
+The API is documented with OpenAPI and can be explored via Swagger UI.
+
+- **Swagger UI**: `http://localhost:8089/swagger-ui.html`
+- **OpenAPI JSON**: `http://localhost:8089/api-docs`
 
 ---
 
