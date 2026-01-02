@@ -1,7 +1,7 @@
 package com.page.pulse.syndication.repository;
 
 import com.page.pulse.domain.entity.Document;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * @author lewisjones
  */
 @Repository
-public interface DocumentApiRepository extends PagingAndSortingRepository<Document, String>
+public interface DocumentApiRepository extends JpaRepository<Document, Long>
 {
 }

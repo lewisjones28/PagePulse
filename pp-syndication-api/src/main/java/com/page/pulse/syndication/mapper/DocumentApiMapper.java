@@ -24,6 +24,12 @@ public interface DocumentApiMapper
      */
     DocumentApiMapper INSTANCE = Mappers.getMapper( DocumentApiMapper.class );
 
+    /**
+     * Maps a Document entity to a DocumentApiDto.
+     *
+     * @param document the Document entity to map
+     * @return the corresponding DocumentApiDto
+     */
     @Mapping( target = "id", source = "id" )
     DocumentApiDto toDto( Document document );
 
