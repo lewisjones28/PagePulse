@@ -138,9 +138,12 @@ function App() {
       setIsOnline(true);
 
       console.log(`Loaded ${transformedDocs.length} documents from API`);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Failed to connect to API';
       console.error('Failed to fetch documents:', error);
-      setApiError(error.message || 'Failed to connect to API');
+      setApiError(errorMessage);
       setIsOnline(false);
       setDocuments([]);
     } finally {

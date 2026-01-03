@@ -113,12 +113,19 @@ export class DocumentService {
     try {
       await apiClient.get('/documents?page=0&size=1');
       return { success: true };
-    } catch (error: any) {
-      const errorMessage = error.code === 'ECONNREFUSED'
-        ? 'API server is not running on port 8089'
-        : error.response?.status === 404
-        ? 'Documents endpoint not found - check API configuration'
-        : `API error: ${error.message}`;
+    } catch (error: unknown) {
+      let errorMessage = 'Unknown error occurred';
+
+      if (error && typeof error === 'object' && 'code' in error) {
+        const axiosError = error as { code?: string; response?: { status?: number }; message?: string };
+        errorMessage = axiosError.code === 'ECONNREFUSED'
+          ? 'API server is not running on port 8089'
+          : axiosError.response?.status === 404
+          ? 'Documents endpoint not found - check API configuration'
+          : `API error: ${axiosError.message || 'Unknown error'}`;
+      } else if (error instanceof Error) {
+        errorMessage = `API error: ${error.message}`;
+      }
 
       return { success: false, error: errorMessage };
     }
