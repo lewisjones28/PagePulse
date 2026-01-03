@@ -1,3 +1,13 @@
+/**
+ * Dashboard Component
+ * Displays analytics and metrics for document management.
+ * Features:
+ * - Document count metrics (total, fresh, stale, outdated)
+ * - Freshness distribution bar chart
+ * - Status distribution pie chart
+ * - Top tags display
+ * Uses a large dataset for comprehensive analytics.
+ */
 import React, { useMemo } from 'react';
 import {
   Box,
@@ -31,12 +41,22 @@ import {
 import { useDocuments } from '../hooks/useDocuments';
 import { getDaysSinceDate } from '../utils/helpers';
 
+/** Color palette for charts */
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
+/**
+ * Dashboard component displaying document analytics and metrics.
+ * @returns Rendered dashboard with charts and statistics
+ */
 export const Dashboard: React.FC = () => {
-  // Fetch a larger dataset for analytics (you might want to create a separate endpoint for this)
+  // Fetch a large dataset for comprehensive analytics
+  // Note: In production, consider creating a dedicated analytics endpoint
   const { data, isLoading } = useDocuments({ page: 0, size: 1000 });
 
+  /**
+   * Calculate all metrics from document data.
+   * Includes counts, freshness distribution, status breakdown, and tag analysis.
+   */
   const metrics = useMemo(() => {
     if (!data?.content) {
       return {
@@ -53,7 +73,7 @@ export const Dashboard: React.FC = () => {
     const documents = data.content;
     const total = documents.length;
 
-    // Calculate freshness metrics
+    // Calculate freshness metrics based on last update date
     const fresh = documents.filter(doc => getDaysSinceDate(doc.documentLastUpdatedAt) < 30).length;
     const stale = documents.filter(doc => {
       const days = getDaysSinceDate(doc.documentLastUpdatedAt);
@@ -61,7 +81,7 @@ export const Dashboard: React.FC = () => {
     }).length;
     const outdated = documents.filter(doc => getDaysSinceDate(doc.documentLastUpdatedAt) >= 90).length;
 
-    // Status breakdown
+    // Calculate status distribution across all documents
     const statusCounts: Record<string, number> = {};
     documents.forEach(doc => {
       statusCounts[doc.status] = (statusCounts[doc.status] || 0) + 1;
@@ -72,7 +92,7 @@ export const Dashboard: React.FC = () => {
       percentage: ((count / total) * 100).toFixed(1),
     }));
 
-    // Tag breakdown (top 10)
+    // Calculate tag usage (top 10 most common tags)
     const tagCounts: Record<string, number> = {};
     documents.forEach(doc => {
       doc.tags.forEach(tag => {
@@ -84,7 +104,7 @@ export const Dashboard: React.FC = () => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
-    // Freshness data for bar chart
+    // Prepare data for freshness bar chart
     const freshnessData = [
       { name: 'Fresh (<30 days)', count: fresh, fill: '#4caf50' },
       { name: 'Stale (30-90 days)', count: stale, fill: '#ff9800' },
@@ -102,6 +122,7 @@ export const Dashboard: React.FC = () => {
     };
   }, [data]);
 
+  // Show loading state while fetching data
   if (isLoading) {
     return (
       <Box sx={{ p: 3 }}>
@@ -117,8 +138,28 @@ export const Dashboard: React.FC = () => {
         PagePulse Dashboard
       </Typography>
 
-      {/* Metrics Cards */}
+      {/* Summary metric cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Total documents card */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="h4" color="primary">
+                    {metrics.total}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Total Documents
+                  </Typography>
+                </Box>
+                <DocumentIcon color="primary" sx={{ fontSize: 40 }} />
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Fresh documents card */}
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
@@ -192,9 +233,27 @@ export const Dashboard: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* Charts */}
+      {/* Analytics charts */}
       <Grid container spacing={3}>
-        {/* Document Freshness Chart */}
+        {/* Document Freshness Bar Chart */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Document Freshness
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={metrics.freshnessData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        {/* Status Distribution Pie Chart */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
@@ -241,7 +300,7 @@ export const Dashboard: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Top Tags */}
+        {/* Top Tags Display */}
         <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>

@@ -1,4 +1,15 @@
+/**
+ * Main Application Component
+ * Legacy version of the PagePulse frontend application.
+ * This file contains the original implementation before the Material-UI refactor.
+ * Features:
+ * - Dashboard view with analytics and charts
+ * - Document list view with search and filters
+ * - Real-time API health monitoring
+ * - Pagination and sorting
+ */
 import { useState, useEffect, useMemo } from 'react';
+// Lucide icon imports for UI elements
 import {
   BarChart3,
   FileText,
@@ -18,6 +29,7 @@ import {
   Loader,
   WifiOff
 } from 'lucide-react';
+// Recharts library for data visualization
 import {
   BarChart,
   Bar,
@@ -36,33 +48,52 @@ import { DocumentService } from './services/documentService';
 import { DocumentApiDto, PagedDocumentApiDto } from './types/api';
 import './App.css';
 
-// Enhanced document interface that maps API data to display format
+/**
+ * Enhanced document interface that extends API data with computed fields.
+ * Maps raw API data to a more UI-friendly format with additional metadata.
+ */
 interface EnhancedDocument {
+  /** Unique internal identifier */
   id: number;
+  /** Document title */
   title: string;
+  /** Current document status */
   status: string;
+  /** Human-readable relative time since last update */
   lastUpdated: string;
+  /** Array of document tags */
   tags: string[];
+  /** Computed freshness indicator based on last update date */
   freshness: 'fresh' | 'stale' | 'outdated';
+  /** External identifier (e.g., Confluence page ID) */
   externalId: string;
+  /** ISO timestamp of document creation */
   createdDate: string;
+  /** ISO timestamp when document was created in external system */
   documentLastCreatedAt: string;
+  /** ISO timestamp when document was last updated in external system */
   documentLastUpdatedAt: string;
 }
 
+/**
+ * Main application component.
+ * Manages application state, API calls, and view switching.
+ */
 function App() {
+  // View state - toggles between dashboard and document list
   const [currentView, setCurrentView] = useState<'dashboard' | 'documents'>('dashboard');
+  // API connection status
   const [isOnline, setIsOnline] = useState(true);
+  // Timestamp of last data refresh
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
-  // API Data State
+  // Document data state
   const [documents, setDocuments] = useState<EnhancedDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [totalElements, setTotalElements] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
 
-  // Document filtering and pagination states
+  // Filter and pagination state
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [freshnessFilter, setFreshnessFilter] = useState('All');
@@ -71,7 +102,11 @@ function App() {
   const [itemsPerPage] = useState(6);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Helper function to calculate document freshness
+  /**
+   * Calculate document freshness based on last update date.
+   * @param lastUpdated - ISO date string of last update
+   * @returns Freshness category: 'fresh', 'stale', or 'outdated'
+   */
   const calculateFreshness = (lastUpdated: string): 'fresh' | 'stale' | 'outdated' => {
     const now = new Date();
     const updatedDate = new Date(lastUpdated);
@@ -82,7 +117,11 @@ function App() {
     return 'outdated';
   };
 
-  // Helper function to format relative time
+  /**
+   * Format a date string to human-readable relative time.
+   * @param dateString - ISO date string
+   * @returns Human-readable time string (e.g., "2 days ago")
+   */
   const formatRelativeTime = (dateString: string): string => {
     const now = new Date();
     const date = new Date(dateString);
@@ -102,7 +141,12 @@ function App() {
     }
   };
 
-  // Transform API data to enhanced format
+  /**
+   * Transform raw API document data to enhanced UI format.
+   * Adds computed fields like freshness and formatted dates.
+   * @param apiDoc - Raw document data from API
+   * @returns Enhanced document with additional UI-friendly fields
+   */
   const transformApiDocument = (apiDoc: DocumentApiDto): EnhancedDocument => {
     const freshness = calculateFreshness(apiDoc.documentLastUpdatedAt);
     return {
@@ -119,7 +163,12 @@ function App() {
     };
   };
 
-  // Fetch documents from API
+  /**
+   * Fetch documents from the API with pagination.
+   * Transforms API data to enhanced format and updates component state.
+   * @param page - Page number (0-indexed)
+   * @param size - Number of items per page
+   */
   const fetchDocuments = async (page: number = 0, size: number = 50) => {
     setIsLoading(true);
     setApiError(null);
@@ -134,7 +183,6 @@ function App() {
       const transformedDocs = response.content.map(transformApiDocument);
       setDocuments(transformedDocs);
       setTotalElements(response.pageInfo.elements);
-      setTotalPages(response.pageInfo.pages);
       setIsOnline(true);
 
       console.log(`Loaded ${transformedDocs.length} documents from API`);
@@ -156,18 +204,19 @@ function App() {
     try {
       const healthy = await DocumentService.healthCheck();
       setIsOnline(healthy);
-    } catch (error) {
+    } catch {
       setIsOnline(false);
     }
   };
 
-  // Initial data load
+  // Initial data load on component mount
   useEffect(() => {
     fetchDocuments();
     checkApiHealth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Periodic health check and data refresh
+  // Periodic health check and status update every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setLastUpdate(new Date());
@@ -179,7 +228,11 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Filter documents based on search and filters
+  /**
+   * Filter documents based on search term and all active filters.
+   * Searches across title, tags, and external ID.
+   * Filters by status, freshness, and tag.
+   */
   const filteredDocuments = useMemo(() => {
     return documents.filter(doc => {
       const matchesSearch = !searchTerm ||
@@ -211,7 +264,7 @@ function App() {
   const allTags = Array.from(new Set(documents.flatMap(doc => doc.tags)));
   const allFreshness = ['fresh', 'stale', 'outdated'];
 
-  // Calculate metrics
+  // Calculate summary metrics for dashboard
   const metrics = {
     total: documents.length,
     fresh: documents.filter(doc => doc.freshness === 'fresh').length,
@@ -219,14 +272,17 @@ function App() {
     outdated: documents.filter(doc => doc.freshness === 'outdated').length
   };
 
-  // Chart data
+  // Prepare data for freshness bar chart
   const chartData = [
     { name: 'Fresh', count: metrics.fresh, color: '#10b981' },
     { name: 'Stale', count: metrics.stale, color: '#f59e0b' },
     { name: 'Outdated', count: metrics.outdated, color: '#ef4444' }
   ];
 
-  // Dynamic status distribution based on actual document statuses
+  /**
+   * Generate status distribution data for pie chart.
+   * Dynamically calculates counts for each status type.
+   */
   const statusData = useMemo(() => {
     const statusCounts = documents.reduce((acc, doc) => {
       acc[doc.status] = (acc[doc.status] || 0) + 1;

@@ -1,3 +1,13 @@
+/**
+ * DocumentList Component
+ * Displays a paginated, searchable, and filterable list of documents in a grid layout.
+ * Features:
+ * - Search by title, external ID, or tags
+ * - Filter by document status
+ * - Sort by multiple criteria
+ * - Adjustable page size
+ * - Responsive grid layout
+ */
 import React, { useState, useMemo } from 'react';
 import {
   Grid,
@@ -19,17 +29,20 @@ import {
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FilterList as FilterIcon,
 } from '@mui/icons-material';
 import { DocumentCard } from './DocumentCard';
 import { useDocuments } from '../hooks/useDocuments';
 import { DocumentApiDto, PaginationParams } from '../types/api';
 
 interface DocumentListProps {
+  /** Callback when a document is selected for detailed view */
   onDocumentSelect?: (document: DocumentApiDto) => void;
 }
 
+/** Available page size options for pagination */
 const PAGE_SIZES = [6, 12, 24, 48];
+
+/** Available sorting options with labels */
 const SORT_OPTIONS = [
   { value: 'title,asc', label: 'Title (A-Z)' },
   { value: 'title,desc', label: 'Title (Z-A)' },
@@ -40,67 +53,90 @@ const SORT_OPTIONS = [
   { value: 'status,asc', label: 'Status (A-Z)' },
 ];
 
+/**
+ * DocumentList component for displaying and managing document lists.
+ * @param props - Component props
+ * @returns Rendered document list with search, filters, and pagination
+ */
 export const DocumentList: React.FC<DocumentListProps> = ({ onDocumentSelect }) => {
+  // Pagination and sorting state
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(12);
   const [sortBy, setSortBy] = useState('documentLastUpdatedAt,desc');
+  
+  // Filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
 
+  // Build pagination parameters for API call
   const paginationParams: PaginationParams = useMemo(() => ({
     page: currentPage,
     size: pageSize,
     sort: [sortBy],
   }), [currentPage, pageSize, sortBy]);
 
+  // Fetch documents with React Query
   const { data, isLoading, error, refetch } = useDocuments(paginationParams);
 
-  // Filter documents based on search term and status
+  /**
+   * Filter documents based on search term and status filter.
+   * Searches across title, external ID, and tags.
+   */
   const filteredDocuments = useMemo(() => {
     if (!data?.content) return [];
 
     return data.content.filter(document => {
+      // Check if document matches search term
       const matchesSearch = !searchTerm ||
         document.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         document.externalId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         document.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
+      // Check if document matches status filter
       const matchesStatus = !statusFilter || document.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [data?.content, searchTerm, statusFilter]);
+  }, [data, searchTerm, statusFilter]);
 
-  // Get unique statuses for filter dropdown
+  /**
+   * Extract unique statuses from documents for filter dropdown.
+   */
   const availableStatuses = useMemo(() => {
     if (!data?.content) return [];
     const statuses = Array.from(new Set(data.content.map(doc => doc.status)));
     return statuses.sort();
-  }, [data?.content]);
+  }, [data]);
 
+  /** Handle page change (convert from 1-based to 0-based indexing) */
   const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page - 1); // MUI pagination is 1-based, our API is 0-based
   };
 
-  const handlePageSizeChange = (event: any) => {
-    setPageSize(event.target.value);
+  /** Handle page size change and reset to first page */
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPageSize(Number(event.target.value));
     setCurrentPage(0); // Reset to first page
   };
 
-  const handleSortChange = (event: any) => {
+  /** Handle sort order change and reset to first page */
+  const handleSortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSortBy(event.target.value);
     setCurrentPage(0); // Reset to first page
   };
 
+  /** Handle search term changes */
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleStatusFilterChange = (event: any) => {
+  /** Handle status filter changes */
+  const handleStatusFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatusFilter(event.target.value);
   };
 
+  // Display error state if API call fails
   if (error) {
     return (
       <Box sx={{ p: 3 }}>
@@ -123,7 +159,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onDocumentSelect }) 
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Search and Filters */}
+      {/* Search bar and filter controls */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
           <TextField
@@ -153,6 +189,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onDocumentSelect }) 
           />
         </Box>
 
+        {/* Expandable filter section */}
         {showFilters && (
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
             <FormControl size="small" sx={{ minWidth: 120 }}>
@@ -200,7 +237,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onDocumentSelect }) 
         )}
       </Paper>
 
-      {/* Results Summary */}
+      {/* Document count and loading indicator */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h6" component="h2">
           Documents {data?.pageInfo && `(${data.pageInfo.elements} total)`}
@@ -209,7 +246,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onDocumentSelect }) 
         {isLoading && <CircularProgress size={24} />}
       </Box>
 
-      {/* Document Grid */}
+      {/* Document grid with loading and empty states */}
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
           <CircularProgress />
@@ -238,7 +275,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onDocumentSelect }) 
         </Grid>
       )}
 
-      {/* Pagination */}
+      {/* Pagination controls (only shown if multiple pages exist) */}
       {data?.pageInfo && data.pageInfo.pages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Pagination

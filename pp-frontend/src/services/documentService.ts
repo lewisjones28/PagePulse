@@ -1,18 +1,26 @@
+/**
+ * Document Service
+ * Provides methods for interacting with the PagePulse backend API.
+ * Handles all document-related API calls, including fetching, pagination, and health checks.
+ */
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 import { DocumentApiDto, PagedDocumentApiDto, PaginationParams } from '../types/api';
 
+// API base URL from environment variable or default to localhost
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8089';
 
+// Configure axios client with base settings
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 10000, // 10 second timeout for all requests
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Add request interceptor for logging
+// Request interceptor for logging and debugging
+// Logs all outgoing requests to help with debugging API calls
 apiClient.interceptors.request.use(
   (config) => {
     console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
@@ -24,7 +32,8 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Add response interceptor for error handling
+// Response interceptor for centralized error handling
+// Provides user-friendly error messages based on response status
 apiClient.interceptors.response.use(
   (response) => {
     console.log('API Response received:', response.status);
@@ -32,6 +41,7 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     console.error('Response error:', error);
+    // Handle specific error cases
     if (error.response?.status === 404) {
       console.error('API endpoint not found - check if pp-syndication-api is running on port 8089');
     } else if (error.response?.status >= 500) {
@@ -43,25 +53,36 @@ apiClient.interceptors.response.use(
   }
 );
 
+/**
+ * Service class for document-related API operations.
+ * All methods are static and handle API communication with proper error handling.
+ */
 export class DocumentService {
   /**
-   * Fetch documents with pagination and sorting
+   * Fetch documents with pagination and sorting.
+   * Builds query parameters and retrieves a paginated list of documents from the API.
+   * @param params - Optional pagination parameters (page, size, sort)
+   * @returns Promise resolving to paginated document data
+   * @throws Error if the API request fails
    */
   static async getDocuments(params?: PaginationParams): Promise<PagedDocumentApiDto> {
     const searchParams = new URLSearchParams();
 
+    // Set page number (default to 0 if not provided)
     if (params?.page !== undefined) {
       searchParams.append('page', params.page.toString());
     } else {
       searchParams.append('page', '0');
     }
 
+    // Set page size (default to 10 if not provided)
     if (params?.size !== undefined) {
       searchParams.append('size', params.size.toString());
     } else {
       searchParams.append('size', '10');
     }
 
+    // Add sort parameters (can have multiple sort fields)
     if (params?.sort && params.sort.length > 0) {
       params.sort.forEach(sortParam => {
         searchParams.append('sort', sortParam);
@@ -82,7 +103,10 @@ export class DocumentService {
   }
 
   /**
-   * Get document by ID
+   * Get a single document by its ID.
+   * @param id - Unique identifier of the document
+   * @returns Promise resolving to the document data
+   * @throws Error if the document is not found or the API request fails
    */
   static async getDocumentById(id: number): Promise<DocumentApiDto> {
     const response: AxiosResponse<DocumentApiDto> = await apiClient.get(
@@ -93,7 +117,9 @@ export class DocumentService {
   }
 
   /**
-   * Check API health
+   * Check if the API server is healthy and responsive.
+   * Uses the Spring Boot Actuator health endpoint.
+   * @returns Promise resolving to true if healthy, false otherwise
    */
   static async healthCheck(): Promise<boolean> {
     try {
@@ -107,7 +133,9 @@ export class DocumentService {
   }
 
   /**
-   * Test API connectivity
+   * Test the API connection by making a minimal request.
+   * Attempts to fetch a single document to verify connectivity.
+   * @returns Promise resolving to an object with success status and optional error message
    */
   static async testConnection(): Promise<{ success: boolean; error?: string }> {
     try {

@@ -1,3 +1,9 @@
+/**
+ * DocumentDetailModal Component
+ * A modal dialog that displays comprehensive details about a selected document.
+ * Shows document metadata, timeline, tags, and health analysis.
+ * Provides warnings for stale or outdated documents.
+ */
 import React from 'react';
 import {
   Dialog,
@@ -18,7 +24,6 @@ import {
   Close as CloseIcon,
   Launch as LaunchIcon,
   Schedule as ScheduleIcon,
-  Update as UpdateIcon,
   Tag as TagIcon,
   Info as InfoIcon,
 } from '@mui/icons-material';
@@ -26,22 +31,36 @@ import { DocumentApiDto } from '../types/api';
 import { formatDate, formatRelativeTime, getStatusColor, getDaysSinceDate, getTagColor } from '../utils/helpers';
 
 interface DocumentDetailModalProps {
+  /** The document to display (null if no document selected) */
   document: DocumentApiDto | null;
+  /** Whether the modal is open */
   open: boolean;
+  /** Callback to close the modal */
   onClose: () => void;
 }
 
+/**
+ * DocumentDetailModal component for displaying full document information.
+ * @param props - Component props
+ * @returns Rendered modal dialog
+ */
 export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
   document,
   open,
   onClose,
 }) => {
+  // Return null if no document is provided
   if (!document) return null;
 
+  // Calculate document metrics
   const statusColor = getStatusColor(document.status, document.documentLastUpdatedAt);
   const daysSinceUpdate = getDaysSinceDate(document.documentLastUpdatedAt);
   const daysSinceCreation = getDaysSinceDate(document.documentLastCreatedAt);
 
+  /**
+   * Determines the freshness indicator based on days since last update.
+   * @returns Object with label and color for the freshness indicator
+   */
   const getFreshnessIndicator = () => {
     if (daysSinceUpdate < 30) return { label: 'Fresh', color: 'success' as const };
     if (daysSinceUpdate < 90) return { label: 'Stale', color: 'warning' as const };
@@ -50,6 +69,9 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
 
   const freshnessIndicator = getFreshnessIndicator();
 
+  /**
+   * Handler for opening the document in an external system (e.g., Confluence).
+   */
   const handleOpenExternal = () => {
     // This would typically open the Confluence page
     console.log('Opening external document:', document.externalId);
@@ -58,6 +80,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      {/* Modal header with close button */}
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" component="span">
           Document Details
@@ -68,6 +91,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
       </DialogTitle>
 
       <DialogContent>
+        {/* Document title and status badges */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
             {document.title}
@@ -94,7 +118,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
         <Divider sx={{ my: 3 }} />
 
         <Grid container spacing={3}>
-          {/* Timestamps */}
+          {/* Timeline card showing creation and update dates */}
           <Grid item xs={12} md={6}>
             <Card variant="outlined">
               <CardContent>
@@ -130,7 +154,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
             </Card>
           </Grid>
 
-          {/* Tags and Metadata */}
+          {/* Tags and metadata card */}
           <Grid item xs={12} md={6}>
             <Card variant="outlined">
               <CardContent>
@@ -163,7 +187,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
             </Card>
           </Grid>
 
-          {/* Document Health */}
+          {/* Document health analysis card */}
           <Grid item xs={12}>
             <Card variant="outlined">
               <CardContent>
@@ -201,6 +225,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
                   </Grid>
                 </Grid>
 
+                {/* Warning for outdated documents (>90 days) */}
                 {daysSinceUpdate > 90 && (
                   <Box sx={{ mt: 2, p: 2, backgroundColor: 'error.light', borderRadius: 1 }}>
                     <Typography variant="body2" color="error.contrastText">
@@ -209,6 +234,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
                   </Box>
                 )}
 
+                {/* Warning for stale documents (30-90 days) */}
                 {daysSinceUpdate > 30 && daysSinceUpdate <= 90 && (
                   <Box sx={{ mt: 2, p: 2, backgroundColor: 'warning.light', borderRadius: 1 }}>
                     <Typography variant="body2" color="warning.contrastText">
@@ -222,6 +248,7 @@ export const DocumentDetailModal: React.FC<DocumentDetailModalProps> = ({
         </Grid>
       </DialogContent>
 
+      {/* Modal action buttons */}
       <DialogActions sx={{ px: 3, pb: 3 }}>
         <Button onClick={handleOpenExternal} startIcon={<LaunchIcon />} variant="outlined">
           Open in Confluence
