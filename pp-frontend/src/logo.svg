@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" aria-label="PagePulse Logo">
+  <defs>
+    <linearGradient id="pageGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="30%" stop-color="#00d4ff"/>
+      <stop offset="70%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="64" cy="64" r="60" fill="#0f0f23" stroke="url(#pageGradient)" stroke-width="2" opacity="0.1"/>
+
+  <!-- Document Stack -->
+  <rect x="32" y="20" width="48" height="64" rx="4" ry="4" fill="url(#pageGradient)" opacity="0.9" filter="url(#softGlow)"/>
+  <rect x="36" y="16" width="48" height="64" rx="4" ry="4" fill="none" stroke="url(#pageGradient)" stroke-width="1" opacity="0.6"/>
+
+  <!-- Document Lines -->
+  <line x1="40" y1="32" x2="72" y2="32" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+  <line x1="40" y1="40" x2="72" y2="40" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+  <line x1="40" y1="48" x2="68" y2="48" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+  <line x1="40" y1="56" x2="70" y2="56" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+  <line x1="40" y1="64" x2="66" y2="64" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+  <line x1="40" y1="72" x2="68" y2="72" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+
+  <!-- Pulse Wave -->
+  <path d="M 16 96 L 24 96 L 32 80 L 40 112 L 48 64 L 56 104 L 64 88 L 72 120 L 80 72 L 88 96 L 96 96 L 104 80 L 112 96"
+        fill="none"
+        stroke="url(#pulseGradient)"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        filter="url(#glow)"/>
+
+  <!-- Corner Accents -->
+  <circle cx="88" cy="24" r="6" fill="#00d4ff" opacity="0.8"/>
+  <circle cx="88" cy="24" r="3" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Data Points -->
+  <circle cx="24" cy="32" r="2" fill="#10b981" opacity="0.7"/>
+  <circle cx="104" cy="40" r="2" fill="#7c3aed" opacity="0.7"/>
+  <circle cx="16" cy="56" r="2" fill="#00d4ff" opacity="0.7"/>
+</svg>
+
