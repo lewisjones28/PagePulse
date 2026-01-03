@@ -22,6 +22,27 @@ export interface DocumentApiDto {
   documentLastCreatedAt: string;
   /** ISO datetime string indicating when the document was last updated */
   documentLastUpdatedAt: string;
+  /** Array of rule violations associated with this document */
+  ruleViolations: RuleViolationApiDto[];
+}
+
+/**
+ * Represents a rule violation from the API.
+ * Contains information about how a document violates or passes a specific rule.
+ */
+export interface RuleViolationApiDto {
+  /** Unique identifier for the violation record */
+  id: number;
+  /** The rule that was evaluated */
+  rule: RuleApiDto;
+  /** Whether the document is currently violating this rule */
+  violating: boolean;
+  /** Details about the violation */
+  violationDetails: string;
+  /** When the violation record was created */
+  createdAt: string;
+  /** When the violation record was last updated */
+  updatedAt: string;
 }
 
 /**

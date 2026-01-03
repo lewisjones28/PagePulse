@@ -57,6 +57,28 @@ public final class PaginationUtil
     }
 
     /**
+     * Converts a Page of entities to a PagedDocumentApiDto using pre-mapped DTOs.
+     *
+     * @param page        the Page of entities (used for pagination info)
+     * @param mappedDtos  the pre-mapped DTOs
+     * @param <T>         the type of the entity
+     * @return PagedDocumentApiDto containing the mapped content and pagination information
+     */
+    public static <T> PagedDocumentApiDto toPagedDtoWithMappedContent( final Page<T> page, final List<com.page.pulse.syndication.model.DocumentApiDto> mappedDtos )
+    {
+        final PagedDocumentApiDto pagedDto = new PagedDocumentApiDto();
+        pagedDto.setContent( mappedDtos );
+
+        final com.page.pulse.syndication.model.PageInfo pageInfo = new com.page.pulse.syndication.model.PageInfo();
+        pageInfo.setPages( page.getTotalPages() );
+        pageInfo.setElements( page.getTotalElements() );
+        pageInfo.setPage( page.getNumber() );
+        pagedDto.setPageInfo( pageInfo );
+
+        return pagedDto;
+    }
+
+    /**
      * Creates a PageInfo object from a Spring Data Page.
      *
      * @param page the Spring Data Page

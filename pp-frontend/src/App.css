@@ -1087,3 +1087,161 @@ nav button.active {
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
+/* Rule Violations Styling */
+.rule-violations {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-primary);
+  padding-top: 1rem;
+}
+
+.violation-details {
+  margin-top: 0.75rem;
+}
+
+.violation-details h4 {
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.violation-item {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid transparent;
+  background: var(--bg-tertiary);
+  transition: all 0.2s ease;
+}
+
+.violation-item.violating {
+  border-left-color: var(--accent-error);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.violation-item.compliant {
+  border-left-color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.violation-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.violation-icon {
+  flex-shrink: 0;
+}
+
+.violation-icon.error {
+  color: var(--accent-error);
+}
+
+.violation-icon.success {
+  color: var(--accent-success);
+}
+
+.violation-rule {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.violation-details-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-left: 1.75rem;
+}
+
+.more-violations {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-style: italic;
+}
+
+/* Rule Compliance Badge Enhancements */
+.freshness-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+/* Dashboard Metric Cards for Rules */
+.metric-card .metric-icon {
+  transition: transform 0.2s ease;
+}
+
+.metric-card:hover .metric-icon {
+  transform: scale(1.1);
+}
+
+/* Chart styling for violations */
+.chart-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chart-icon {
+  color: var(--accent-primary);
+}
+
+/* Responsive adjustments for violations */
+@media (max-width: 768px) {
+  .violation-item {
+    padding: 0.5rem;
+  }
+
+  .violation-details-text {
+    margin-left: 1.25rem;
+  }
+
+  .violation-header {
+    gap: 0.35rem;
+  }
+}
+
+/* Animations for violation items */
+@keyframes violationAlert {
+  0%, 100% {
+    border-left-color: var(--accent-error);
+  }
+  50% {
+    border-left-color: rgba(239, 68, 68, 0.5);
+  }
+}
+
+.violation-item.violating {
+  animation: violationAlert 2s ease-in-out;
+}
+
+/* Loading state for violations */
+.violation-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Enhanced shield icons */
+.section-icon {
+  color: var(--accent-primary);
+}
