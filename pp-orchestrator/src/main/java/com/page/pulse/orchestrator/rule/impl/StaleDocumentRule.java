@@ -43,6 +43,17 @@ public class StaleDocumentRule implements DocumentRule
     }
 
     /**
+     * Gets the description of the rule.
+     *
+     * @return the description of the rule
+     */
+    @Override
+    public String description()
+    {
+        return "Checks if a document is stale based on its last updated timestamp. A document is considered stale if it has not been updated within a configured number of days.";
+    }
+
+    /**
      * Evaluates the rule against the provided Document. A document is considered stale if it has not been updated in
      * the last X day(s).
      *
