@@ -13,3 +13,22 @@ services:
       - CONFLUENCE_API_TOKEN=<your-confluence-api-token>
       - CONFLUENCE_BASE_URL=<your-confluence-base-url>
       - CONFLUENCE_USERNAME=<your-confluence-username>
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/page_pulse
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_REDIS_HOST=localhost
+      - SPRING_REDIS_PORT=6379
+
+  pp-syndication-api:
+    build:
+      context: ./pp-syndication-api
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./pp-syndication-api/target:/app/target
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/page_pulse
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+

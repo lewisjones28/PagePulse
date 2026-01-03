@@ -8,6 +8,10 @@ This module exposes a read-only REST API (generated from an OpenAPI spec) for co
 - Code generation: `openapi-generator-maven-plugin` (Spring server)
 - Persistence: JPA (entities from `pp-domain`)
 
+## Architecture Overview
+
+![Syndication API Flow](../docs/flows/images/page-pulse-syndication-api-flow.png)
+
 ## Endpoints
 
 ### Documents
