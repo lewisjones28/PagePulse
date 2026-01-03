@@ -19,6 +19,13 @@ public interface DocumentRule
     String name();
 
     /**
+     * Gets the description of the rule.
+     *
+     * @return the description of the rule
+     */
+    String description();
+
+    /**
      * Evaluates the rule against the provided Document.
      *
      * @param documentDto the Document to evaluate
