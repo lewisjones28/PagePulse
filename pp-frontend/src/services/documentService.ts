@@ -1,10 +1,8 @@
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 import { DocumentApiDto, PagedDocumentApiDto, PaginationParams } from '../types/api';
-import { MockDocumentService } from './mockDocumentService';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8089';
-const USE_MOCK_DATA = import.meta.env.VITE_ENABLE_MOCK_DATA === 'true';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -29,14 +27,17 @@ apiClient.interceptors.request.use(
 // Add response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => {
+    console.log('API Response received:', response.status);
     return response;
   },
   (error) => {
     console.error('Response error:', error);
     if (error.response?.status === 404) {
-      console.error('API endpoint not found');
+      console.error('API endpoint not found - check if pp-syndication-api is running on port 8089');
     } else if (error.response?.status >= 500) {
       console.error('Server error occurred');
+    } else if (error.code === 'ECONNREFUSED') {
+      console.error('Connection refused - API server is not running');
     }
     return Promise.reject(error);
   }
@@ -47,73 +48,79 @@ export class DocumentService {
    * Fetch documents with pagination and sorting
    */
   static async getDocuments(params?: PaginationParams): Promise<PagedDocumentApiDto> {
-    if (USE_MOCK_DATA) {
-      console.log('Using mock data for development');
-      return MockDocumentService.getDocuments(params);
+    const searchParams = new URLSearchParams();
+
+    if (params?.page !== undefined) {
+      searchParams.append('page', params.page.toString());
+    } else {
+      searchParams.append('page', '0');
     }
 
-    try {
-      const searchParams = new URLSearchParams();
-
-      if (params?.page !== undefined) {
-        searchParams.append('page', params.page.toString());
-      }
-
-      if (params?.size !== undefined) {
-        searchParams.append('size', params.size.toString());
-      }
-
-      if (params?.sort && params.sort.length > 0) {
-        params.sort.forEach(sortParam => {
-          searchParams.append('sort', sortParam);
-        });
-      }
-
-      const response: AxiosResponse<PagedDocumentApiDto> = await apiClient.get(
-        `/documents?${searchParams.toString()}`
-      );
-
-      return response.data;
-    } catch (error) {
-      console.warn('API call failed, falling back to mock data:', error);
-      return MockDocumentService.getDocuments(params);
+    if (params?.size !== undefined) {
+      searchParams.append('size', params.size.toString());
+    } else {
+      searchParams.append('size', '10');
     }
+
+    if (params?.sort && params.sort.length > 0) {
+      params.sort.forEach(sortParam => {
+        searchParams.append('sort', sortParam);
+      });
+    } else {
+      // Default sort by last updated descending
+      searchParams.append('sort', 'documentLastUpdatedAt,desc');
+    }
+
+    console.log('Fetching documents with params:', searchParams.toString());
+
+    const response: AxiosResponse<PagedDocumentApiDto> = await apiClient.get(
+      `/documents?${searchParams.toString()}`
+    );
+
+    console.log('Documents received:', response.data);
+    return response.data;
   }
 
   /**
    * Get document by ID
    */
   static async getDocumentById(id: number): Promise<DocumentApiDto> {
-    if (USE_MOCK_DATA) {
-      return MockDocumentService.getDocumentById(id);
-    }
+    const response: AxiosResponse<DocumentApiDto> = await apiClient.get(
+      `/documents/${id}`
+    );
 
-    try {
-      const response: AxiosResponse<DocumentApiDto> = await apiClient.get(
-        `/documents/${id}`
-      );
-
-      return response.data;
-    } catch (error) {
-      console.warn('API call failed, falling back to mock data:', error);
-      return MockDocumentService.getDocumentById(id);
-    }
+    return response.data;
   }
 
   /**
    * Check API health
    */
   static async healthCheck(): Promise<boolean> {
-    if (USE_MOCK_DATA) {
-      return MockDocumentService.healthCheck();
-    }
-
     try {
-      await apiClient.get('/actuator/health');
+      const response = await apiClient.get('/actuator/health');
+      console.log('Health check successful:', response.status);
       return true;
     } catch (error) {
       console.warn('Health check failed:', error);
       return false;
+    }
+  }
+
+  /**
+   * Test API connectivity
+   */
+  static async testConnection(): Promise<{ success: boolean; error?: string }> {
+    try {
+      await apiClient.get('/documents?page=0&size=1');
+      return { success: true };
+    } catch (error: any) {
+      const errorMessage = error.code === 'ECONNREFUSED'
+        ? 'API server is not running on port 8089'
+        : error.response?.status === 404
+        ? 'Documents endpoint not found - check API configuration'
+        : `API error: ${error.message}`;
+
+      return { success: false, error: errorMessage };
     }
   }
 }
