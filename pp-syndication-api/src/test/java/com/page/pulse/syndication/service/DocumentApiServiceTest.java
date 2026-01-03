@@ -51,4 +51,22 @@ class DocumentApiServiceTest
         // then
         assertEquals( expectedPage, actualPage );
     }
+
+    @Test
+    void testGetDocumentsShouldReturnEmptyPageWhenNoDocuments()
+    {
+        // given
+        final Pageable pageable = PageRequest.of( 0, 10 );
+        final Page<Document> emptyPage = new PageImpl<>( Collections.emptyList(), pageable, 0 );
+
+        // when
+        when( documentApiRepository.findAll( pageable ) ).thenReturn( emptyPage );
+
+        final Page<Document> actualPage = documentApiService.getDocuments( pageable );
+
+        // then
+        assertEquals( emptyPage, actualPage );
+        assertEquals( 0, actualPage.getTotalElements() );
+        assertEquals( 0, actualPage.getContent().size() );
+    }
 }

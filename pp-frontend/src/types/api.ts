@@ -22,6 +22,27 @@ export interface DocumentApiDto {
   documentLastCreatedAt: string;
   /** ISO datetime string indicating when the document was last updated */
   documentLastUpdatedAt: string;
+  /** Array of rule violations associated with this document */
+  ruleViolations: RuleViolationApiDto[];
+}
+
+/**
+ * Represents a rule violation from the API.
+ * Contains information about how a document violates or passes a specific rule.
+ */
+export interface RuleViolationApiDto {
+  /** Unique identifier for the violation record */
+  id: number;
+  /** The rule that was evaluated */
+  rule: RuleApiDto;
+  /** Whether the document is currently violating this rule */
+  violating: boolean;
+  /** Details about the violation */
+  violationDetails: string;
+  /** When the violation record was created */
+  createdAt: string;
+  /** When the violation record was last updated */
+  updatedAt: string;
 }
 
 /**
@@ -73,3 +94,29 @@ export interface DocumentFilters {
   /** Filter documents updated after this date (ISO string, optional) */
   updatedAfter?: string;
 }
+
+/**
+ * Represents a rule from the API.
+ * Contains rule metadata and configuration information.
+ */
+export interface RuleApiDto {
+  /** Unique identifier for the rule */
+  id: number;
+  /** Rule name */
+  name: string;
+  /** Rule description */
+  description: string;
+  /** Whether the rule is active or not */
+  active: boolean;
+}
+
+/**
+ * Paginated response containing rules and pagination metadata.
+ */
+export interface PagedRuleApiDto {
+  /** Array of rules on the current page */
+  content: RuleApiDto[];
+  /** Pagination metadata */
+  pageInfo: PageInfo;
+}
+

@@ -56,6 +56,16 @@ VITE_APP_VERSION=1.0.0
 - **Tag System**: Document categorization and filtering
 - **Pagination**: Navigate through large document sets
 - **Confluence Integration**: Direct links to open documents
+- **Rule Violation Tracking**: View all rule violations per document
+- **Compliance Filtering**: Filter documents by rule compliance status
+
+### Rule Compliance System
+- **Rule Violation Display**: See which documents violate specific business rules
+- **Compliance Badges**: Visual indicators showing document compliance status
+- **Violation Details**: Detailed violation information with timestamps
+- **Rule-specific Views**: Filter and view documents by specific rule violations
+- **Compliance Metrics**: Dashboard showing overall rule compliance statistics
+- **Active/Resolved Violations**: Track violation status over time
 
 ### User Interface
 - **Dark Mode Theme**: Modern cyberpunk-inspired design
@@ -108,6 +118,14 @@ Development server proxies API requests to avoid CORS issues during development.
 
 The frontend consumes the following endpoints from the PagePulse API:
 
-- `GET /documents` - Fetch paginated documents with filtering
-- `GET /documents/{id}` - Get specific document details
+- `GET /documents` - Fetch paginated documents with rule violations
+- `GET /documents/{id}` - Get specific document details with violations
+- `GET /rules` - Fetch all configured business rules
 - `GET /health` - API health check
+
+### Rule Violation Data Structure
+Each document now includes `ruleViolations` array with:
+- Rule information (name, description, active status)
+- Violation status (violating true/false)
+- Violation details and timestamps
+- Audit information (created/updated dates)

@@ -35,6 +35,19 @@ class RuleTest
         return new Rule( name, description );
     }
 
+    /**
+     * Helper method to create a Rule with specific name, description, and active status.
+     *
+     * @param name        the name to set
+     * @param description the description to set
+     * @param active      the active status to set
+     * @return a Rule instance
+     */
+    private static Rule rule( final String name, final String description, final Boolean active )
+    {
+        return new Rule( name, description, active );
+    }
+
     @Test
     void testEqualsAndHashCodeMatchForSameName()
     {
@@ -158,10 +171,12 @@ class RuleTest
         rule.setId( 1 );
         rule.setName( "updated-name" );
         rule.setDescription( "updated-description" );
+        rule.setActive( false );
 
         // then
         assertThat( rule.getId() ).isEqualTo( 1 );
         assertThat( rule.getName() ).isEqualTo( "updated-name" );
         assertThat( rule.getDescription() ).isEqualTo( "updated-description" );
+        assertThat( rule.getActive() ).isFalse();
     }
 }

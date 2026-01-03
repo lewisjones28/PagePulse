@@ -28,9 +28,20 @@ public class Rule extends Auditable<String>
     @Column( nullable = false )
     private String description;
 
+    @Column( nullable = false )
+    private Boolean active = true;
+
     public Rule( final String name, final String description )
     {
         this.name = name;
         this.description = description;
+        this.active = true;
+    }
+
+    public Rule( final String name, final String description, final Boolean active )
+    {
+        this.name = name;
+        this.description = description;
+        this.active = active != null ? active : true;
     }
 }
