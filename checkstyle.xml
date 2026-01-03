@@ -20,6 +20,10 @@
         <!-- Miscellaneous -->
         <module name="IllegalThrows"/>
         <module name="IllegalImport"/>
+        <module name="LeftCurly">
+            <property name="option" value="nl"/>
+            <property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF,CTOR_DEF"/>
+        </module>
         <module name="EmptyBlock"/>
         <module name="NeedBraces"/>
         <module name="EmptyStatement"/>
