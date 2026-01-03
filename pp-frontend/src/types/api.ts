@@ -73,3 +73,29 @@ export interface DocumentFilters {
   /** Filter documents updated after this date (ISO string, optional) */
   updatedAfter?: string;
 }
+
+/**
+ * Represents a rule from the API.
+ * Contains rule metadata and configuration information.
+ */
+export interface RuleApiDto {
+  /** Unique identifier for the rule */
+  id: number;
+  /** Rule name */
+  name: string;
+  /** Rule description */
+  description: string;
+  /** Whether the rule is active or not */
+  active: boolean;
+}
+
+/**
+ * Paginated response containing rules and pagination metadata.
+ */
+export interface PagedRuleApiDto {
+  /** Array of rules on the current page */
+  content: RuleApiDto[];
+  /** Pagination metadata */
+  pageInfo: PageInfo;
+}
+

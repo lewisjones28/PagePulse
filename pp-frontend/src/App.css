@@ -987,3 +987,103 @@ body {
   font-style: italic;
   font-size: 0.8rem;
 }
+
+/* Rules Section Styles */
+.rules {
+  padding: 2rem;
+}
+
+.rule-details {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--accent-primary);
+}
+
+.rule-details h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--accent-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.rule-info p {
+  margin: 0.5rem 0;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.rule-info p:last-child {
+  border-bottom: none;
+}
+
+.rule-info strong {
+  color: var(--text-secondary);
+  display: inline-block;
+  width: 80px;
+  margin-right: 0.5rem;
+}
+
+/* Rules-specific document card adjustments */
+.rules .document-card {
+  transition: all 0.3s ease;
+}
+
+.rules .document-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Rules loading and error states */
+.rules .loading-state,
+.rules .api-error {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.rules .no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.rules .no-results h3 {
+  margin: 1rem 0;
+  color: var(--text-primary);
+}
+
+/* Rules navigation button active state */
+nav button.active {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Info button styling for rules */
+.rules .confluence-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  color: var(--accent-primary);
+  transition: all 0.2s ease;
+}
+
+.rules .confluence-btn:hover {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  transform: scale(1.05);
+}
+
+/* Rule-specific tag styling */
+.tag.active-rule {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.tag.inactive-rule {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+

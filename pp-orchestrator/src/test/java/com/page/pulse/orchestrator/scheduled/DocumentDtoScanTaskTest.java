@@ -6,6 +6,7 @@ import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.pojo.rule.RuleResult;
 import com.page.pulse.orchestrator.rule.engine.DocumentRuleEngine;
 import com.page.pulse.orchestrator.service.ConfluenceApiService;
+import com.page.pulse.orchestrator.service.DocumentRuleViolationService;
 import com.page.pulse.orchestrator.service.DocumentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,8 @@ class DocumentDtoScanTaskTest
     private DocumentService documentService;
     @Mock
     private AlertDispatcher alertDispatcher;
+    @Mock
+    private DocumentRuleViolationService violationService;
     @InjectMocks
     private DocumentScanTask documentScanTask;
     private DocumentDto sampleDocumentDto;

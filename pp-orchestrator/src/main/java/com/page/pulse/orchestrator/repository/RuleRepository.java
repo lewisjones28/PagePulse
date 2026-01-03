@@ -12,5 +12,12 @@ import java.util.Optional;
  */
 public interface RuleRepository extends JpaRepository<Rule, Integer>
 {
+    /**
+     * Find a rule by its name.
+     *
+     * @param name the name of the rule
+     * @return an optional containing the rule if found
+     */
     Optional<Rule> findByName( String name );
+
 }

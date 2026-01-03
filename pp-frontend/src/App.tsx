@@ -27,7 +27,9 @@ import {
   Database,
   Zap,
   Loader,
-  WifiOff
+  WifiOff,
+  Settings,
+  Info
 } from 'lucide-react';
 // Recharts library for data visualization
 import {
@@ -45,7 +47,8 @@ import {
 } from 'recharts';
 import ReactPaginate from 'react-paginate';
 import { DocumentService } from './services/documentService';
-import { DocumentApiDto, PagedDocumentApiDto } from './types/api';
+import { RuleService } from './services/ruleService';
+import { DocumentApiDto, PagedDocumentApiDto, RuleApiDto, PagedRuleApiDto } from './types/api';
 import './App.css';
 
 /**
@@ -80,8 +83,8 @@ interface EnhancedDocument {
  * Manages application state, API calls, and view switching.
  */
 function App() {
-  // View state - toggles between dashboard and document list
-  const [currentView, setCurrentView] = useState<'dashboard' | 'documents'>('dashboard');
+  // View state - toggles between dashboard, document list, and rules
+  const [currentView, setCurrentView] = useState<'dashboard' | 'documents' | 'rules'>('dashboard');
   // API connection status
   const [isOnline, setIsOnline] = useState(true);
   // Timestamp of last data refresh
@@ -92,6 +95,13 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [totalElements, setTotalElements] = useState(0);
+
+  // Rule data state
+  const [rules, setRules] = useState<RuleApiDto[]>([]);
+  const [rulesLoading, setRulesLoading] = useState(false);
+  const [rulesError, setRulesError] = useState<string | null>(null);
+  const [totalRules, setTotalRules] = useState(0);
+  const [selectedRule, setSelectedRule] = useState<RuleApiDto | null>(null);
 
   // Filter and pagination state
   const [searchTerm, setSearchTerm] = useState('');
@@ -196,6 +206,38 @@ function App() {
       setDocuments([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  /**
+   * Fetch rules from the API with pagination.
+   * @param page - Page number (0-indexed)
+   * @param size - Number of items per page
+   */
+  const fetchRules = async (page: number = 0, size: number = 50) => {
+    setRulesLoading(true);
+    setRulesError(null);
+
+    try {
+      const response: PagedRuleApiDto = await RuleService.getRules({
+        page,
+        size,
+        sort: ['name,asc']
+      });
+
+      setRules(response.content);
+      setTotalRules(response.pageInfo.elements);
+
+      console.log(`Loaded ${response.content.length} rules from API`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Failed to connect to Rules API';
+      console.error('Failed to fetch rules:', error);
+      setRulesError(errorMessage);
+      setRules([]);
+    } finally {
+      setRulesLoading(false);
     }
   };
 
@@ -345,6 +387,16 @@ function App() {
           >
             <FileText size={20} />
             Documents ({documents.length})
+          </button>
+          <button
+            onClick={() => {
+              setCurrentView('rules');
+              if (rules.length === 0) fetchRules();
+            }}
+            className={currentView === 'rules' ? 'active' : ''}
+          >
+            <Settings size={20} />
+            Rules ({rules.length})
           </button>
         </nav>
       </header>
@@ -511,7 +563,7 @@ function App() {
               </p>
             </div>
           </div>
-        ) : (
+        ) : currentView === 'documents' ? (
           <div className="documents">
             <div className="documents-header">
               <h2>
@@ -682,7 +734,119 @@ function App() {
               </div>
             )}
           </div>
-        )}
+        ) : currentView === 'rules' ? (
+          <div className="rules">
+            <div className="documents-header">
+              <h2>
+                <Settings className="section-icon" />
+                Business Rules
+              </h2>
+              <div className="documents-stats">
+                {totalRules} {totalRules === 1 ? 'rule' : 'rules'} configured
+              </div>
+            </div>
+
+            {/* Rules Error Display */}
+            {rulesError && (
+              <div className="api-error">
+                <AlertTriangle className="error-icon" />
+                <div>
+                  <h3>Rules API Connection Error</h3>
+                  <p>{rulesError}</p>
+                  <p>Make sure the PagePulse Rules API is running on port 8089</p>
+                  <button onClick={() => fetchRules()} className="retry-btn">
+                    <Activity size={16} />
+                    Retry Connection
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Rules Loading State */}
+            {rulesLoading && (
+              <div className="loading-state">
+                <Loader className="spinner" />
+                <p>Loading rules from API...</p>
+              </div>
+            )}
+
+            {/* Rules Grid */}
+            {!rulesLoading && rules.length > 0 && (
+              <div className="documents-grid">
+                {rules.map((rule) => (
+                  <div key={rule.id} className="document-card">
+                    <div className="document-header">
+                      <h3>{rule.name}</h3>
+                      <button
+                        className="confluence-btn"
+                        onClick={() => setSelectedRule(selectedRule?.id === rule.id ? null : rule)}
+                        title={selectedRule?.id === rule.id ? "Hide details" : "Show details"}
+                      >
+                        <Info size={16} />
+                      </button>
+                    </div>
+
+                    <div className="document-meta">
+                      <p>
+                        <strong>Rule ID:</strong> {rule.id}
+                      </p>
+                      <p>
+                        <strong>Description:</strong> {rule.description}
+                      </p>
+                      <p>
+                        <strong>Status:</strong>
+                        <span className={`freshness-badge ${rule.active ? 'fresh' : 'outdated'}`}>
+                          {rule.active ? (
+                            <>
+                              <CheckCircle size={14} />
+                              Active
+                            </>
+                          ) : (
+                            <>
+                              <AlertTriangle size={14} />
+                              Inactive
+                            </>
+                          )}
+                        </span>
+                      </p>
+                      {selectedRule?.id === rule.id && (
+                        <div className="rule-details">
+                          <h4>Rule Details</h4>
+                          <div className="rule-info">
+                            <p><strong>Name:</strong> {rule.name}</p>
+                            <p><strong>Description:</strong> {rule.description}</p>
+                            <p><strong>Rule ID:</strong> {rule.id}</p>
+                            <p><strong>Type:</strong> Business Logic Rule</p>
+                            <p><strong>Status:</strong> {rule.active ? 'Active' : 'Inactive'}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="tags">
+                      <Settings size={14} />
+                      <span className={`tag ${rule.active ? 'active-rule' : 'inactive-rule'}`}>
+                        {rule.active ? 'active' : 'inactive'}
+                      </span>
+                      <span className="tag">business-rule</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {!rulesLoading && rules.length === 0 && !rulesError && (
+              <div className="no-results">
+                <Settings size={48} />
+                <h3>No rules configured</h3>
+                <p>There are currently no business rules configured in the system.</p>
+                <button onClick={() => fetchRules()} className="reset-btn">
+                  Refresh Rules
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
       </main>
 
       <footer className="app-footer">
