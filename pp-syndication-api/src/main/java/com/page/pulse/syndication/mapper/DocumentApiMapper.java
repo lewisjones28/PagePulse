@@ -37,7 +37,6 @@ public interface DocumentApiMapper
      */
     @Mapping( target = "id", source = "id" )
     @Mapping( target = "ruleViolations", ignore = true )
-    // Will be set manually
     DocumentApiDto toDto( Document document );
 
     /**

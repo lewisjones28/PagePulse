@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @AllArgsConstructor
-@Transactional(readOnly = true)
+@Transactional( readOnly = true )
 public class DocumentApiService
 {
 

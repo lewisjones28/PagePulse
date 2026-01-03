@@ -24,10 +24,9 @@ public interface DocumentRuleViolationApiRepository extends JpaRepository<Docume
      * @param documents the list of documents to search for
      * @return a list of violations for the documents
      */
-    @Query("SELECT drv FROM DocumentRuleViolation drv " +
+    @Query( "SELECT drv FROM DocumentRuleViolation drv " +
            "JOIN FETCH drv.document " +
-           "JOIN FETCH drv.rule " +
-           "WHERE drv.document IN :documents")
-    List<DocumentRuleViolation> findByDocumentIn( @Param("documents") List<Document> documents );
+           "JOIN FETCH drv.rule " + "WHERE drv.document IN :documents" )
+    List<DocumentRuleViolation> findByDocumentIn( @Param( "documents" ) List<Document> documents );
 
 }
