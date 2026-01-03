@@ -19,6 +19,11 @@ public final class PaginationUtil
 {
 
     /**
+     * Default page size for pagination.
+     */
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
+    /**
      * Private constructor to prevent instantiation.
      */
     private PaginationUtil()
@@ -49,6 +54,44 @@ public final class PaginationUtil
         pagedDto.setPageInfo( pageInfo );
 
         return pagedDto;
+    }
+
+    /**
+     * Creates a PageInfo object from a Spring Data Page.
+     *
+     * @param page the Spring Data Page
+     * @param <T>  the type of content in the page
+     * @return PageInfo object containing pagination information
+     */
+    public static <T> com.page.pulse.syndication.model.PageInfo toPageInfo( final Page<T> page )
+    {
+        final com.page.pulse.syndication.model.PageInfo pageInfo = new com.page.pulse.syndication.model.PageInfo();
+        pageInfo.setPages( page.getTotalPages() );
+        pageInfo.setElements( page.getTotalElements() );
+        pageInfo.setPage( page.getNumber() );
+        return pageInfo;
+    }
+
+    /**
+     * Creates a Pageable object from page, size, and sort parameters.
+     *
+     * @param page the page number (0-indexed)
+     * @param size the page size
+     * @param sort the sort criteria
+     * @return Pageable object for use with Spring Data repositories
+     */
+    public static org.springframework.data.domain.Pageable createPageable( final Integer page, final Integer size, final List<String> sort )
+    {
+        final int pageNumber = page != null ? page : 0;
+        final int pageSize = size != null ? size : DEFAULT_PAGE_SIZE;
+        final List<Sort.Order> orders = createSortOrder( sort );
+
+        if ( orders.isEmpty() )
+        {
+            return org.springframework.data.domain.PageRequest.of( pageNumber, pageSize );
+        }
+
+        return org.springframework.data.domain.PageRequest.of( pageNumber, pageSize, Sort.by( orders ) );
     }
 
     /**

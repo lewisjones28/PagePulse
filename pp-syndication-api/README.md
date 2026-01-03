@@ -2,7 +2,7 @@
 
 Syndication API for **PagePulse**.
 
-This module exposes a read-only REST API (generated from an OpenAPI spec) for consuming PagePulse data (currently: **Documents**).
+This module exposes a read-only REST API (generated from an OpenAPI spec) for consuming PagePulse data (**Documents** and **Rules**).
 
 - OpenAPI spec source: `src/main/resources/openapispec.yaml`
 - Code generation: `openapi-generator-maven-plugin` (Spring server)
@@ -25,14 +25,19 @@ This module exposes a read-only REST API (generated from an OpenAPI spec) for co
         - `sort=title,asc`
         - or repeated tokens: `sort=title&sort=asc`
 
-Response schema:
+### Rules
 
-- `PagedDocumentApiDto`
-  - `content`: list of `DocumentApiDto`
-  - `pageInfo`:
-    - `page`: current page
-    - `pages`: total pages
-    - `elements`: total elements
+- `GET /rules`
+  - Query params:
+    - `page` (default `0`)
+    - `size` (default `10`)
+    - `sort` (repeatable)
+      - Supports either:
+        - `sort=name,asc`
+        - or repeated tokens: `sort=name&sort=asc`
+
+- `GET /rules/{id}`
+  - Path param: `id` (Integer)
 
 ## Running locally
 
