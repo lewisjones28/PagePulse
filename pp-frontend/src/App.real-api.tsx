@@ -223,13 +223,23 @@ function App() {
     { name: 'Outdated', count: metrics.outdated, color: '#ef4444' }
   ];
 
-  const statusData = [
-    { name: 'Active', count: documents.filter(doc => doc.status === 'Active').length },
-    { name: 'Draft', count: documents.filter(doc => doc.status === 'Draft').length },
-    { name: 'Inactive', count: documents.filter(doc => doc.status === 'Inactive').length }
-  ].filter(item => item.count > 0); // Only show statuses that exist
+  // Dynamic status distribution based on actual document statuses
+  const statusData = useMemo(() => {
+    const statusCounts = documents.reduce((acc, doc) => {
+      acc[doc.status] = (acc[doc.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-  const pieColors = ['#00d4ff', '#7c3aed', '#ef4444'];
+    return Object.entries(statusCounts)
+      .map(([status, count]) => ({
+        name: status,
+        count
+      }))
+      .filter(item => item.count > 0) // Only show statuses that exist
+      .sort((a, b) => b.count - a.count); // Sort by count descending
+  }, [documents]);
+
+  const pieColors = ['#00d4ff', '#7c3aed', '#ef4444', '#f59e0b', '#10b981', '#8b5cf6', '#06b6d4', '#f97316'];
 
   const openInConfluence = (externalId: string) => {
     // Configure this URL to match your Confluence instance
@@ -378,24 +388,43 @@ function App() {
                     <Activity className="chart-icon" />
                     Status Distribution
                   </h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={statusData}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={100}
-                        dataKey="count"
-                        label={({ name, value }) => `${name}: ${value}`}
-                      >
-                        {statusData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  {statusData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={statusData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={100}
+                          dataKey="count"
+                          label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(1)}%)`}
+                        >
+                          {statusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value, name) => [value, `${name} documents`]}
+                          contentStyle={{
+                            backgroundColor: 'var(--bg-card)',
+                            border: '1px solid var(--border-primary)',
+                            borderRadius: '8px'
+                          }}
+                        />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div style={{
+                      height: 300,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--text-muted)'
+                    }}>
+                      No status data available
+                    </div>
+                  )}
                 </div>
               </div>
             )}
