@@ -1,6 +1,6 @@
 package com.page.pulse.syndication.api;
 
-import com.page.pulse.domain.entity.Document;
+import com.page.pulse.domain.entity.document.Document;
 import com.page.pulse.syndication.repository.DocumentApiRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

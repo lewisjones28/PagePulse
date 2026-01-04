@@ -739,23 +739,8 @@ function App() {
 
                     <div className="document-meta">
                       <p>
-                        <strong>Status:</strong> {document.status}
-                      </p>
-                      <p>
                         <Calendar size={14} />
                         <strong> Last Updated:</strong> {document.lastUpdated}
-                      </p>
-                      <p>
-                        <strong>Freshness:</strong>
-                        <span className={`freshness-badge ${document.freshness}`}>
-                          {document.freshness === 'fresh' && <CheckCircle size={14} />}
-                          {document.freshness === 'stale' && <Clock size={14} />}
-                          {document.freshness === 'outdated' && <AlertTriangle size={14} />}
-                          {document.freshness.charAt(0).toUpperCase() + document.freshness.slice(1)}
-                        </span>
-                      </p>
-                      <p>
-                        <strong>ID:</strong> {document.externalId}
                       </p>
 
                       {/* Rule Violations Section */}

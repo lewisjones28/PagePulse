@@ -1,7 +1,7 @@
 package com.page.pulse.orchestrator.service;
 
-import com.page.pulse.domain.entity.Document;
-import com.page.pulse.domain.entity.DocumentRuleViolation;
+import com.page.pulse.domain.entity.document.Document;
+import com.page.pulse.domain.entity.document.DocumentRuleViolation;
 import com.page.pulse.domain.entity.Rule;
 import com.page.pulse.orchestrator.pojo.rule.RuleEvaluation;
 import com.page.pulse.orchestrator.pojo.rule.RuleResult;

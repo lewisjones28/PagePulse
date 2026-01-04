@@ -1,7 +1,7 @@
 package com.page.pulse.syndication.repository;
 
-import com.page.pulse.domain.entity.Document;
-import com.page.pulse.domain.entity.DocumentRuleViolation;
+import com.page.pulse.domain.entity.document.Document;
+import com.page.pulse.domain.entity.document.DocumentRuleViolation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

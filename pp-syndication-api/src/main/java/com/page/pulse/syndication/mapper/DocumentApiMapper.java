@@ -1,7 +1,7 @@
 package com.page.pulse.syndication.mapper;
 
-import com.page.pulse.domain.entity.Document;
-import com.page.pulse.domain.entity.DocumentRuleViolation;
+import com.page.pulse.domain.entity.document.Document;
+import com.page.pulse.domain.entity.document.DocumentRuleViolation;
 import com.page.pulse.syndication.model.DocumentApiDto;
 import com.page.pulse.syndication.model.RuleViolationApiDto;
 import org.mapstruct.Mapper;

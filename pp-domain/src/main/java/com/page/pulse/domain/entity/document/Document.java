@@ -1,5 +1,6 @@
-package com.page.pulse.domain.entity;
+package com.page.pulse.domain.entity.document;
 
+import com.page.pulse.domain.entity.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -48,6 +49,17 @@ public class Document extends Auditable<String>
     @Column( name = "document_updated_at" )
     private LocalDateTime documentLastUpdatedAt;
 
+    /**
+     * Constructs a Document with the provided details.
+     *
+     * @param externalId              the external id
+     * @param externalOwnerId         the external owner id
+     * @param title                   the title
+     * @param status                  the status
+     * @param tags                    the tags
+     * @param documentLastCreatedAt   the document last created at timestamp
+     * @param documentLastUpdatedAt   the document last updated at timestamp
+     */
     public Document( final String externalId, final String externalOwnerId, final String title, final String status,
                      final Collection<String> tags, final LocalDateTime documentLastCreatedAt,
                      final LocalDateTime documentLastUpdatedAt )

@@ -31,6 +31,12 @@ public class Rule extends Auditable<String>
     @Column( nullable = false )
     private Boolean active = true;
 
+    /**
+     * Constructs a Rule with the provided name and description. The rule is set to active by default.
+     *
+     * @param name        the name of the rule
+     * @param description the description of the rule
+     */
     public Rule( final String name, final String description )
     {
         this.name = name;
@@ -38,6 +44,13 @@ public class Rule extends Auditable<String>
         this.active = true;
     }
 
+    /**
+     * Constructs a Rule with the provided name, description, and active status.
+     *
+     * @param name        the name of the rule
+     * @param description the description of the rule
+     * @param active      the active status of the rule
+     */
     public Rule( final String name, final String description, final Boolean active )
     {
         this.name = name;
