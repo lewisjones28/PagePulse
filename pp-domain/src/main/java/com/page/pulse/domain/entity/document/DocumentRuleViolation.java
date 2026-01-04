@@ -1,5 +1,7 @@
-package com.page.pulse.domain.entity;
+package com.page.pulse.domain.entity.document;
 
+import com.page.pulse.domain.entity.Auditable;
+import com.page.pulse.domain.entity.Rule;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,6 +51,13 @@ public class DocumentRuleViolation extends Auditable<String>
     @Column( name = "violation_details", length = VIOLATION_DETAILS_MAX_LENGTH )
     private String violationDetails;
 
+    /**
+     * Constructs a DocumentRuleViolation with the provided document, rule, and violating status.
+     *
+     * @param document  the document
+     * @param rule      the rule
+     * @param violating whether the document is violating the rule
+     */
     public DocumentRuleViolation( final Document document, final Rule rule, final Boolean violating )
     {
         this.document = document;
@@ -56,6 +65,14 @@ public class DocumentRuleViolation extends Auditable<String>
         this.violating = violating != null ? violating : false;
     }
 
+    /**
+     * Constructs a DocumentRuleViolation with the provided document, rule, violating status, and violation details.
+     *
+     * @param document         the document
+     * @param rule             the rule
+     * @param violating        whether the document is violating the rule
+     * @param violationDetails details about the violation
+     */
     public DocumentRuleViolation( final Document document, final Rule rule, final Boolean violating,
                                   final String violationDetails )
     {

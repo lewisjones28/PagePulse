@@ -1,6 +1,6 @@
 package com.page.pulse.orchestrator.service;
 
-import com.page.pulse.domain.entity.Document;
+import com.page.pulse.domain.entity.document.Document;
 import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.repository.DocumentRepository;
 import org.junit.jupiter.api.BeforeEach;

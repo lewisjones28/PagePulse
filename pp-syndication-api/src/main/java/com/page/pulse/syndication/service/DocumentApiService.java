@@ -1,7 +1,7 @@
 package com.page.pulse.syndication.service;
 
-import com.page.pulse.domain.entity.Document;
-import com.page.pulse.domain.entity.DocumentRuleViolation;
+import com.page.pulse.domain.entity.document.Document;
+import com.page.pulse.domain.entity.document.DocumentRuleViolation;
 import com.page.pulse.syndication.repository.DocumentApiRepository;
 import com.page.pulse.syndication.repository.DocumentRuleViolationApiRepository;
 import lombok.AllArgsConstructor;

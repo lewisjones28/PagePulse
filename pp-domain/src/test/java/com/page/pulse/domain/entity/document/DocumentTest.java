@@ -1,4 +1,4 @@
-package com.page.pulse.domain.entity;
+package com.page.pulse.domain.entity.document;
 
 import org.junit.jupiter.api.Test;
 

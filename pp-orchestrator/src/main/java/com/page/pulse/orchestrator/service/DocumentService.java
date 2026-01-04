@@ -1,6 +1,6 @@
 package com.page.pulse.orchestrator.service;
 
-import com.page.pulse.domain.entity.Document;
+import com.page.pulse.domain.entity.document.Document;
 import com.page.pulse.orchestrator.pojo.DocumentDto;
 import com.page.pulse.orchestrator.repository.DocumentRepository;
 import org.springframework.cache.annotation.CachePut;
@@ -74,7 +74,7 @@ public class DocumentService
         document.setExternalOwnerId( dto.externalOwnerId() );
         document.getTags().clear();
         document.getTags().addAll( nonNullTags( dto.tags() ) );
-        document.setDocumentLastUpdatedAt( dto.createdAt() );
+        document.setDocumentLastUpdatedAt( document.getDocumentLastUpdatedAt() );
         document.setDocumentLastCreatedAt( document.getDocumentLastCreatedAt() );
         return document;
     }

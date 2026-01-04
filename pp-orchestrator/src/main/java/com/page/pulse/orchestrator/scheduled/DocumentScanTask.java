@@ -1,7 +1,7 @@
 package com.page.pulse.orchestrator.scheduled;
 
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
-import com.page.pulse.domain.entity.Document;
+import com.page.pulse.domain.entity.document.Document;
 import com.page.pulse.orchestrator.alert.AlertDispatcher;
 import com.page.pulse.orchestrator.alert.AlertPayload;
 import com.page.pulse.orchestrator.pojo.DocumentDto;

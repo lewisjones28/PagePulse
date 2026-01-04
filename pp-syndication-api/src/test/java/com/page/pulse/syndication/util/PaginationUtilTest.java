@@ -1,6 +1,6 @@
 package com.page.pulse.syndication.util;
 
-import com.page.pulse.domain.entity.Document;
+import com.page.pulse.domain.entity.document.Document;
 import com.page.pulse.syndication.model.DocumentApiDto;
 import com.page.pulse.syndication.model.PagedDocumentApiDto;
 import org.junit.jupiter.api.Test;

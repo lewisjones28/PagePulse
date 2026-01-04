@@ -1,6 +1,6 @@
 package com.page.pulse.orchestrator.repository;
 
-import com.page.pulse.domain.entity.Document;
+import com.page.pulse.domain.entity.document.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

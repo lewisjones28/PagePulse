@@ -1,5 +1,6 @@
-package com.page.pulse.domain.entity;
+package com.page.pulse.domain.entity.document;
 
+import com.page.pulse.domain.entity.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

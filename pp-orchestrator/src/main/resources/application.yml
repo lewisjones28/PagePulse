@@ -30,5 +30,5 @@ confluence:
 document:
   rules:
     stale-document:
-      daysThreshold: 10
+      daysThreshold: 182
   cron-expression: "0 0/1 * * * *"
