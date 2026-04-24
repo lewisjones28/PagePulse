@@ -3,7 +3,7 @@ package com.page.pulse.orchestrator.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
+import org.springframework.boot.cache.autoconfigure.CacheProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -27,14 +27,14 @@ public class CacheConfiguration
     @Bean
     public RedisCacheConfiguration redisCacheConfiguration( final CacheProperties cacheProperties )
     {
-        final ObjectMapper objectMapper = new ObjectMapper()
+        final ObjectMapper cacheObjectMapper = new ObjectMapper()
             .registerModule( new JavaTimeModule() )
-            .setSerializationInclusion( JsonInclude.Include.NON_NULL )
-            .findAndRegisterModules();
+            .findAndRegisterModules()
+            .setSerializationInclusion( JsonInclude.Include.NON_NULL );
 
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig()
             .serializeValuesWith( RedisSerializationContext.SerializationPair.fromSerializer(
-                new GenericJackson2JsonRedisSerializer( objectMapper ) ) );
+                new GenericJackson2JsonRedisSerializer( cacheObjectMapper ) ) );
 
         final CacheProperties.Redis redis = cacheProperties.getRedis();
         if ( redis.getTimeToLive() != null )
