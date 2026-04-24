@@ -10,12 +10,6 @@
     </parent>
     <artifactId>pp-confluence-feign</artifactId>
     <dependencies>
-        <!-- Jackson (for JsonNode) -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

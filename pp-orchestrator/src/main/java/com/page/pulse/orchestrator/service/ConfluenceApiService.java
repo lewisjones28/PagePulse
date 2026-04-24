@@ -1,6 +1,8 @@
 package com.page.pulse.orchestrator.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.page.pulse.confluence.client.ConfluenceApiClient;
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
 import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
@@ -24,14 +26,16 @@ public class ConfluenceApiService
     private static final Logger log = LoggerFactory.getLogger( ConfluenceApiService.class );
     private final ConfluenceApiClient confluenceApiClient;
     private final BaseDocumentMapper<DocumentDto> documentMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     /**
      * Constructor for ConfluenceApiService.
      *
      * @param confluenceApiClient the Feign client for Confluence API
-     * @param documentMapper the MapStruct mapper to convert JsonNode to PageDto
+     * @param documentMapper the mapper used to convert Confluence JSON into documents
      */
-    public ConfluenceApiService( final ConfluenceApiClient confluenceApiClient, final BaseDocumentMapper<DocumentDto> documentMapper )
+    public ConfluenceApiService( final ConfluenceApiClient confluenceApiClient,
+                                 final BaseDocumentMapper<DocumentDto> documentMapper )
     {
         this.confluenceApiClient = confluenceApiClient;
         this.documentMapper = documentMapper;
@@ -50,11 +54,11 @@ public class ConfluenceApiService
             final ConfluencePageParams finalParams = ( params == null ) ? ConfluencePageParams.empty() : params;
             if ( finalParams.isEmpty() )
             {
-                return confluenceApiClient.getPages();
+                return parseResponseBody( confluenceApiClient.getPages(), "pages" );
             }
             else
             {
-                return confluenceApiClient.getPages( finalParams.toMap() );
+                return parseResponseBody( confluenceApiClient.getPages( finalParams.toMap() ), "pages" );
             }
 
         }
@@ -109,12 +113,28 @@ public class ConfluenceApiService
         try
         {
             final ConfluencePageParams params = ConfluencePageParams.empty().includeLabels( Boolean.TRUE );
-            return confluenceApiClient.getPage( pageId, params.toMap() );
+            return parseResponseBody( confluenceApiClient.getPage( pageId, params.toMap() ), "page " + pageId );
         }
         catch ( final Exception e )
         {
             log.error( "Error fetching page with ID {} from Confluence API", pageId, e );
             throw e;
+        }
+    }
+
+    private JsonNode parseResponseBody( final String responseBody, final String resourceDescription )
+    {
+        if ( responseBody == null || responseBody.isBlank() )
+        {
+            return null;
+        }
+        try
+        {
+            return objectMapper.readTree( responseBody );
+        }
+        catch ( final JsonProcessingException e )
+        {
+            throw new IllegalStateException( "Failed to parse Confluence API response for " + resourceDescription, e );
         }
     }
 }

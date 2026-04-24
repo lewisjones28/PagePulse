@@ -1,8 +1,6 @@
 package com.page.pulse.orchestrator.service;
 
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.page.pulse.orchestrator.pojo.DocumentDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +8,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.page.pulse.confluence.client.ConfluenceApiClient;
 import com.page.pulse.confluence.client.page.params.ConfluencePageParams;
 import com.page.pulse.orchestrator.mapper.BaseDocumentMapper;
@@ -42,20 +42,18 @@ class ConfluenceApiServiceTest
     {
         // given
         final ConfluencePageParams params = mock( ConfluencePageParams.class );
-        final JsonNode mockPagesResponse = mock( JsonNode.class );
-        final JsonNode mockIdNode1 = mock( JsonNode.class );
-        final JsonNode mockPageDetails1 = mock( JsonNode.class );
         final DocumentDto mockDocumentDto1 = mock( DocumentDto.class );
 
         // when
         when( params.isEmpty() ).thenReturn( false );
         when( params.toMap() ).thenReturn( Map.of( "status", "current" ) );
-        when( confluenceApiClient.getPages( any( Map.class ) ) ).thenReturn( mockPagesResponse );
-        when( mockPagesResponse.isNull() ).thenReturn( false );
-        when( mockPagesResponse.findValues( "id" ) ).thenReturn( List.of( mockIdNode1 ) );
-        when( mockIdNode1.asText() ).thenReturn( PAGE_1_ID );
-        when( confluenceApiClient.getPage( eq( PAGE_1_ID ), any( Map.class ) ) ).thenReturn( mockPageDetails1 );
-        when( documentMapper.toDocumentList( List.of( mockPageDetails1 ) ) ).thenReturn( List.of( mockDocumentDto1 ) );
+        when( confluenceApiClient.getPages( any( Map.class ) ) ).thenReturn( "{\"results\":[{\"id\":\"12345\"}]}" );
+        when( confluenceApiClient.getPage( eq( PAGE_1_ID ), any( Map.class ) ) ).thenReturn( "{\"id\":\"12345\"}" );
+        when( documentMapper.toDocumentList( org.mockito.ArgumentMatchers.<List<JsonNode>>any() ) ).thenAnswer( invocation ->
+        {
+            final List<?> nodes = invocation.getArgument( 0 );
+            return nodes.size() == 1 ? List.of( mockDocumentDto1 ) : List.of();
+        } );
 
         final List<DocumentDto> result = confluenceApiService.collectPages( params );
 
@@ -67,11 +65,7 @@ class ConfluenceApiServiceTest
     void testCollectPagesWithNullParamsReturnsEmptyListWhenNoPages()
     {
         // given
-        final JsonNode mockPagesResponse = mock( JsonNode.class );
-
-        // when
-        when( confluenceApiClient.getPages() ).thenReturn( mockPagesResponse );
-        when( mockPagesResponse.isNull() ).thenReturn( true );
+        when( confluenceApiClient.getPages() ).thenReturn( "null" );
 
         final List<DocumentDto> result = confluenceApiService.collectPages( null );
 
@@ -101,14 +95,11 @@ class ConfluenceApiServiceTest
     {
         // given
         final ConfluencePageParams params = mock( ConfluencePageParams.class );
-        final JsonNode mockPagesResponse = mock( JsonNode.class );
 
         // when
         when( params.isEmpty() ).thenReturn( false );
         when( params.toMap() ).thenReturn( Map.of( "status", "current" ) );
-        when( confluenceApiClient.getPages( any( Map.class ) ) ).thenReturn( mockPagesResponse );
-        when( mockPagesResponse.isNull() ).thenReturn( false );
-        when( mockPagesResponse.findValues( "id" ) ).thenReturn( List.of() );
+        when( confluenceApiClient.getPages( any( Map.class ) ) ).thenReturn( "{\"results\":[]}" );
         when( documentMapper.toDocumentList( List.of() ) ).thenReturn( List.of() );
 
         final List<DocumentDto> result = confluenceApiService.collectPages( params );
