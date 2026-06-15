@@ -22,7 +22,7 @@
     </modules>
     <properties>
         <java.version>25</java.version>
-        <spring-cloud-openfeign.version>5.0.1</spring-cloud-openfeign.version>
+        <spring-cloud-openfeign.version>5.0.2</spring-cloud-openfeign.version>
         <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <maven.compiler.source>25</maven.compiler.source>
